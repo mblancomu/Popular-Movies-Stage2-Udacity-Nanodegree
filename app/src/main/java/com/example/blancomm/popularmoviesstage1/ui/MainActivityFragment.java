@@ -2,6 +2,7 @@ package com.example.blancomm.popularmoviesstage1.ui;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -42,7 +43,8 @@ public class MainActivityFragment extends Fragment {
 
         View v =  inflater.inflate(R.layout.fragment_main, container, false);
         RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),2));
         recyclerView.setAdapter(new MainRecyclerAdapter(items));
 
         return v;

@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.example.blancomm.popularmoviesstage1.R;
 import com.example.blancomm.popularmoviesstage1.ui.DetailActivity;
@@ -23,7 +23,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.list_row, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_grid_row_gral, viewGroup, false);
 
         return new ViewHolder(v);
     }
@@ -31,15 +31,18 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
         String item = mItems.get(i);
-        viewHolder.mTextView.setText(item);
+        //Bitmap thumbnail;
 
-        viewHolder.mTextView.setOnClickListener(new View.OnClickListener() {
+        //viewHolder.mThumbnail.setImageBitmap(thumbnail);
+        viewHolder.mThumbnail.setOnClickListener(new View.OnClickListener(){
+
             @Override
             public void onClick(View view) {
                 Context context = view.getContext();
                 context.startActivity(new Intent(context, DetailActivity.class));
             }
         });
+
     }
 
     @Override
@@ -49,11 +52,11 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView mTextView;
+        private ImageView mThumbnail;
 
         ViewHolder(View v) {
             super(v);
-            mTextView = (TextView)v.findViewById(R.id.list_item);
+            mThumbnail = (ImageView) v.findViewById(R.id.thumbnail_film);
         }
     }
 

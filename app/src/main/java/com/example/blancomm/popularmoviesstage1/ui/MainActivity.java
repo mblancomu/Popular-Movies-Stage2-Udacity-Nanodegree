@@ -9,14 +9,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.blancomm.popularmoviesstage1.R;
+import com.example.blancomm.popularmoviesstage1.VolleyListeners;
 import com.example.blancomm.popularmoviesstage1.adapters.MainPagerAdapter;
+import com.example.blancomm.popularmoviesstage1.network.VolleyRequest;
+import com.example.blancomm.popularmoviesstage1.utils.Constant;
 
-public class MainActivity extends AppCompatActivity {
+import org.json.JSONObject;
+
+public class MainActivity extends AppCompatActivity implements VolleyListeners{
 
     private DrawerLayout mDrawerLayout;
 
@@ -77,9 +83,16 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
             case R.id.action_settings:
+                VolleyRequest.requestJson(this, Constant.URL_JSON_MOVIE_DB);
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFinishJsonRequest(JSONObject jsonObject) {
+
+        Log.e("","Llego el json: " + jsonObject);
     }
 }
