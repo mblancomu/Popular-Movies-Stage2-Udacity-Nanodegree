@@ -1,5 +1,6 @@
 package com.example.blancomm.popularmoviesstage1.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -10,8 +11,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.blancomm.popularmoviesstage1.R;
@@ -22,7 +25,7 @@ import com.example.blancomm.popularmoviesstage1.utils.Constant;
 
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity implements VolleyListeners{
+public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
 
@@ -83,16 +86,10 @@ public class MainActivity extends AppCompatActivity implements VolleyListeners{
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
             case R.id.action_settings:
-                VolleyRequest.requestJson(this, Constant.URL_JSON_MOVIE_DB);
+                //VolleyRequest.requestJson(this, Constant.URL_JSON_MOVIE_LIST);
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onFinishJsonRequest(JSONObject jsonObject) {
-
-        Log.e("","Llego el json: " + jsonObject);
     }
 }

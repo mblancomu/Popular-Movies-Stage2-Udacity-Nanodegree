@@ -17,11 +17,12 @@
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-            <ImageView
+            <com.android.volley.toolbox.NetworkImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:src="@drawable/imagen_prueba_detalle"
+                android:id="@+id/image_detail"
                 app:layout_collapseMode="parallax"/>
 
             <android.support.v7.widget.Toolbar
@@ -59,6 +60,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/text_detail"
                         android:text="Lorem ipsum"/>
 
                     <TextView

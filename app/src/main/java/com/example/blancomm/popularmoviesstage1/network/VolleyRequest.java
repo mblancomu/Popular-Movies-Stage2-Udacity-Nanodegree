@@ -26,14 +26,16 @@ public class VolleyRequest {
     }
 
 
-    public static void requestJson(VolleyListeners listeners, String url) {
+    public static void requestJson(final VolleyListeners listeners, String url) {
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "Response: " + response.toString());
+
+                        listeners.onFinishJsonRequest(response);
                     }
                 }, new Response.ErrorListener() {
 
@@ -79,7 +81,7 @@ public class VolleyRequest {
                 networkImageView, R.drawable.ico_loading, R.drawable.ico_error));*/
 
         Cache cache = AppController.getInstance().getRequestQueue().getCache();
-        Cache.Entry entry = cache.get(Constant.URL_IMAGE_MOVIE_DB);
+        Cache.Entry entry = cache.get(Constant.URL_DETAIL_IMAGE);
         if (entry != null) {
             try {
                 String data = new String(entry.data, "UTF-8");

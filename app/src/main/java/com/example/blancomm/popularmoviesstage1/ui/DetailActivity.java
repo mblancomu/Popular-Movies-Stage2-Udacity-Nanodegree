@@ -1,5 +1,6 @@
 package com.example.blancomm.popularmoviesstage1.ui;
 
+import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,9 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        Intent intent = getIntent();
+        String mIdMovie =  intent.getStringExtra("id");
 
         initObjectsView();
     }
