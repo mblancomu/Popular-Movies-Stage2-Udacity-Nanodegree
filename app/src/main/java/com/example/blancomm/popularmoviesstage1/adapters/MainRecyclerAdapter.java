@@ -2,6 +2,7 @@ package com.example.blancomm.popularmoviesstage1.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -45,13 +46,18 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         String urlImage = Constant.URL_THUMNAIL_IMAGE + thumbnail;
         VolleyRequest.requestImage(urlImage, viewHolder.mThumbnail);
 
-        Log.e("","Llega: " + item.getOriginalLanguage()+ "--" + item.getVoteAverage()+ "--" +
-        item.getVoteCount()+ "--" + item.getReleaseDate());
-        float rating = Float.parseFloat(item.getVoteAverage());
+        float rating = Float.parseFloat(item.getVoteAverage())/2;
+
+        Log.e(MainRecyclerAdapter.class.getSimpleName(),"RATING: " + rating);
+
+        if (rating >= 4.0){
+            viewHolder.mCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorBackgroundCardViewHightest));
+        }
+
         String year = item.getReleaseDate().substring(0,4);
 
         viewHolder.mVotes.setText(item.getVoteCount() + " votes");
-        viewHolder.mRatingBar.setRating(rating/2);
+        viewHolder.mRatingBar.setRating(rating);
         viewHolder.mTitle.setText(item.getTitle()+ " (" + year + ")");
 
         int iconFlag =  0;
@@ -70,7 +76,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
             public void onClick(View view) {
                 Context context = view.getContext();
                 Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra("id",item.getId());
+                intent.putExtra(Intent.EXTRA_TEXT,item.getId());
                 context.startActivity(intent);
             }
         });
@@ -88,6 +94,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         private TextView mTitle,mVotes;
         private ImageView mIconLanguage;
         private RatingBar mRatingBar;
+        private CardView mCard;
 
         ViewHolder(View v) {
             super(v);
@@ -96,6 +103,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
             mIconLanguage = (ImageView)v.findViewById(R.id.language_icon);
             mRatingBar =  (RatingBar)v.findViewById(R.id.ratingBar);
             mVotes = (TextView)v.findViewById(R.id.votes);
+            mCard = (CardView)v.findViewById(R.id.cardview);
         }
     }
 

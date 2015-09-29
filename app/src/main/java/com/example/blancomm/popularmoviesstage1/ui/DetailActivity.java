@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -12,44 +15,41 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.blancomm.popularmoviesstage1.BackButtonListeners;
 import com.example.blancomm.popularmoviesstage1.R;
+import com.example.blancomm.popularmoviesstage1.utils.Constant;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends AppCompatActivity implements BackButtonListeners{
+
+    private DetailActivityFragment fragmentDetail;
+    private String mIdMovie;
+    private Fragment mBackFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
+        //Get extras from MainActivityFragment when the user click on a element of list.
         Intent intent = getIntent();
-        String mIdMovie =  intent.getStringExtra("id");
+        mIdMovie = intent.getStringExtra(Intent.EXTRA_TEXT);
 
-        initObjectsView();
+        //Pass the extras get the gridlist with the id of the movie to the detail fragment.
+        Bundle args = new Bundle();
+        args.putString(Constant.TAG_ID_MOVIE, mIdMovie);
+        fragmentDetail = DetailActivityFragment.newInstance(mIdMovie);
+
+        getSupportFragmentManager().beginTransaction().add(R.id.container, fragmentDetail,
+                Constant.TAG_DETAIL_FRAGMENT).addToBackStack(Constant.TAG_DETAIL_FRAGMENT).commit();
+
     }
 
-    private void initObjectsView(){
+    @Override
+    public void onBackPressed() {
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        CollapsingToolbarLayout collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-        collapsingToolbar.setTitle("Argo");
-
-        FloatingActionButton fab = (FloatingActionButton)findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               /* Snackbar.make(findViewById(R.id.coordinator_detail), "Añadido a favoritos", Snackbar.LENGTH_LONG).setAction("Action", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(DetailActivity.this, "Pelicula añadida", Toast.LENGTH_LONG).show();
-                    }
-                }).show();*/
-            }
-        });
+        fragmentDetail = (DetailActivityFragment) mBackFragment;
+        fragmentDetail.onBackPressed();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,4 +72,10 @@ public class DetailActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void setSelectedFragment(Fragment fragment) {
+        this.mBackFragment = fragment;
+    }
+
 }

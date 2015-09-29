@@ -3,7 +3,8 @@ package com.example.blancomm.popularmoviesstage1.utils;
 public class Constant {
 
     //API Key MoviesDB
-    public static final String API_KEY = "api_key=**********************";
+    public static final String API_KEY = "api_key=";
+    public static final String NEW_PAGE = "&page=";
 
     //Constants for the differente URLs
     public static final String URL_JSON_MOVIE_LIST = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&"
@@ -16,6 +17,12 @@ public class Constant {
     //Constants for several TAGs
     public static final String TAG_JSON = "tag_json";
     public static final String TAG_IMAGE = "tag_image";
+
+    //Constants values for argunments data on fragments.
+    public static final String TAG_ID_MOVIE = "tag_id_movie";
+
+    //Fragments tags for id the fragment;
+    public static final String TAG_DETAIL_FRAGMENT = "fragment_detail";
 
 
 

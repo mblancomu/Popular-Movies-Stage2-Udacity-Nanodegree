@@ -17,7 +17,24 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return MainActivityFragment.newInstance(position);
+        Fragment fragment = null;
+        switch (position){
+            case 0:
+                fragment =  MainActivityFragment.newInstance(position);
+                break;
+            case 1:
+                fragment =  MainActivityFragment.newInstance(position);
+                break;
+            case 2:
+                fragment =  MainActivityFragment.newInstance(position);
+                break;
+            default:
+                fragment =  MainActivityFragment.newInstance(position);
+                break;
+
+        }
+
+        return fragment;
     }
 
     @Override

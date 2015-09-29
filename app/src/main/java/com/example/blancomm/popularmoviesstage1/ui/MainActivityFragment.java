@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +14,12 @@ import android.view.WindowManager;
 
 import com.example.blancomm.popularmoviesstage1.R;
 import com.example.blancomm.popularmoviesstage1.VolleyListeners;
+import com.example.blancomm.popularmoviesstage1.adapters.EndlessRecyclerOnScrollListener;
 import com.example.blancomm.popularmoviesstage1.adapters.MainRecyclerAdapter;
 import com.example.blancomm.popularmoviesstage1.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage1.network.VolleyRequest;
 import com.example.blancomm.popularmoviesstage1.utils.Constant;
+import com.example.blancomm.popularmoviesstage1.utils.JSONActions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,9 +31,11 @@ import java.util.List;
 public class MainActivityFragment extends Fragment implements VolleyListeners {
 
     private static final String TAB_POSITION = "tab_position";
+    private static final String TAG = MainActivityFragment.class.getSimpleName();
     private List<MoviesInfo> mMovies;
     private MainRecyclerAdapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private GridLayoutManager mLayoutManager;
+    private int current_page = 1;
 
     public MainActivityFragment() {
     }
@@ -59,9 +64,6 @@ public class MainActivityFragment extends Fragment implements VolleyListeners {
 
         Bundle args = getArguments();
         int tabPosition = args.getInt(TAB_POSITION);
-       /* Display display = ((WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        int orientation = display.getRotation();
-        Log.e("","Orientación: " + orientation);*/
 
         mMovies = new ArrayList<MoviesInfo>();
         mAdapter = new MainRecyclerAdapter(mMovies, getActivity());
@@ -70,9 +72,9 @@ public class MainActivityFragment extends Fragment implements VolleyListeners {
         int orientation = display.getRotation();
 
         if (orientation == 0){
-            mLayoutManager = new GridLayoutManager(getActivity(), 2);
-        }else if (orientation == 1){
-            mLayoutManager = new GridLayoutManager(getActivity(), 3);
+            mLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.columns_grid_portait));
+        }else {
+            mLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.columns_grid_landscape));
         }
 
         View v =  inflater.inflate(R.layout.fragment_main, container, false);
@@ -80,6 +82,15 @@ public class MainActivityFragment extends Fragment implements VolleyListeners {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(mAdapter);
+        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager) {
+            @Override
+            public void onLoadMore(int current_page) {
+
+                loadMoreData(current_page);
+
+            }
+
+        });
 
         return v;
     }
@@ -90,60 +101,52 @@ public class MainActivityFragment extends Fragment implements VolleyListeners {
 
     }
 
-    private List<MoviesInfo> parse(JSONObject json) throws JSONException {
-        ArrayList<MoviesInfo> movies = new ArrayList<MoviesInfo>();
-
-        JSONArray jsonMovies = json.getJSONArray("results");
-
-        for(int i =0; i < jsonMovies.length(); i++) {
-            JSONObject jsonMovie = jsonMovies.getJSONObject(i);
-
-            String title = jsonMovie.getString("title");
-            String adult = jsonMovie.getString("adult");
-            String imageDetail = jsonMovie.getString("backdrop_path");
-            String genreIds = jsonMovie.getString("genre_ids");
-            String id = jsonMovie.getString("id");
-            String originalLanguage = jsonMovie.getString("original_language");
-            String originalTitle = jsonMovie.getString("original_title");
-            String description = jsonMovie.getString("overview");
-            String releaseDate = jsonMovie.getString("release_date");
-            String thumnail = jsonMovie.getString("poster_path");
-            String popularity = jsonMovie.getString("popularity");
-            String video = jsonMovie.getString("video");
-            String voteAverage = jsonMovie.getString("vote_average");
-            String voteCount = jsonMovie.getString("vote_count");
-
-            MoviesInfo movie = new MoviesInfo();
-            movie.setAdult(adult);
-            movie.setDescription(description);
-            movie.setGenreIds(genreIds);
-            movie.setTitle(title);
-            movie.setId(id);
-            movie.setImageDetail(imageDetail);
-            movie.setOriginalLanguage(originalLanguage);
-            movie.setOriginalTitle(originalTitle);
-            movie.setReleaseDate(releaseDate);
-            movie.setThumnail(thumnail);
-            movie.setPopularity(popularity);
-            movie.setVideo(video);
-            movie.setVoteAverage(voteAverage);
-            movie.setVoteCount(voteCount);
-
-            movies.add(movie);
-        }
-
-        return movies;
-    }
-
     @Override
     public void onFinishJsonRequest(JSONObject jsonObject) {
 
         try {
-            mMovies = parse(jsonObject);
+
+            JSONArray jsonMovies = jsonObject.getJSONArray("results");
+
+            for(int i =0; i < jsonMovies.length(); i++) {
+                JSONObject jsonMovie = jsonMovies.getJSONObject(i);
+
+                MoviesInfo movie = new MoviesInfo();
+                movie.setAdult(jsonMovie.getString("adult"));
+                movie.setDescription(jsonMovie.getString("overview"));
+                movie.setGenreIds(jsonMovie.getString("genre_ids"));
+                movie.setTitle(jsonMovie.getString("title"));
+                movie.setId(jsonMovie.getString("id"));
+                movie.setImageDetail(jsonMovie.getString("backdrop_path"));
+                movie.setOriginalLanguage(jsonMovie.getString("original_language"));
+                movie.setOriginalTitle(jsonMovie.getString("original_title"));
+                movie.setReleaseDate(jsonMovie.getString("release_date"));
+                movie.setThumnail(jsonMovie.getString("poster_path"));
+                movie.setPopularity(jsonMovie.getString("popularity"));
+                movie.setVideo(jsonMovie.getString("video"));
+                movie.setVoteAverage(jsonMovie.getString("vote_average"));
+                movie.setVoteCount(jsonMovie.getString("vote_count"));
+
+                mMovies.add(movie);
+            }
+
+            //mMovies = JSONActions.parse(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         mAdapter.updateResults(mMovies,getActivity());
+    }
+
+    private void loadMoreData(int current_page) {
+
+        current_page++;
+
+        VolleyRequest.requestJson(this, Constant.URL_JSON_MOVIE_LIST + Constant.NEW_PAGE + current_page);
+
+        Log.e(TAG,"Nueva pagina: " + current_page + " ,url: " + Constant.URL_JSON_MOVIE_LIST + Constant.NEW_PAGE + current_page);
+
+        mAdapter.notifyDataSetChanged();
+
     }
 }
