@@ -48,7 +48,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
 
         float rating = Float.parseFloat(item.getVoteAverage())/2;
 
-        Log.e(MainRecyclerAdapter.class.getSimpleName(),"RATING: " + rating);
+        Log.e(MainRecyclerAdapter.class.getSimpleName(),"RATING / 2: " + rating + " RATING REAL: " + item.getVoteAverage());
 
         if (rating >= 4.0){
             viewHolder.mCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorBackgroundCardViewHightest));

@@ -20,7 +20,7 @@ public class JSONActions {
         MovieDetailInfo movie = new MovieDetailInfo();
         movie.setAdult(jsonMovieDetail.getString("adult"));
         movie.setDescription(jsonMovieDetail.getString("overview"));
-        // movie.setGenreIds(jsonMovieDetail.getString("genre_ids"));
+        movie.setGenreIds(jsonMovieDetail.getString("genres"));
         movie.setTitle(jsonMovieDetail.getString("title"));
         movie.setId(jsonMovieDetail.getString("id"));
         movie.setImageDetail(jsonMovieDetail.getString("backdrop_path"));

@@ -19,7 +19,6 @@ import com.example.blancomm.popularmoviesstage1.adapters.MainRecyclerAdapter;
 import com.example.blancomm.popularmoviesstage1.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage1.network.VolleyRequest;
 import com.example.blancomm.popularmoviesstage1.utils.Constant;
-import com.example.blancomm.popularmoviesstage1.utils.JSONActions;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,20 +27,21 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivityFragment extends Fragment implements VolleyListeners {
+public class MainFragment extends Fragment implements VolleyListeners {
 
     private static final String TAB_POSITION = "tab_position";
-    private static final String TAG = MainActivityFragment.class.getSimpleName();
+    private static final String TAG = MainFragment.class.getSimpleName();
     private List<MoviesInfo> mMovies;
     private MainRecyclerAdapter mAdapter;
     private GridLayoutManager mLayoutManager;
+    private int mPosition;
     private int current_page = 1;
 
-    public MainActivityFragment() {
+    public MainFragment() {
     }
 
-    public static MainActivityFragment newInstance(int tabPosition) {
-        MainActivityFragment fragment = new MainActivityFragment();
+    public static MainFragment newInstance(int tabPosition) {
+        MainFragment fragment = new MainFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -54,8 +54,37 @@ public class MainActivityFragment extends Fragment implements VolleyListeners {
 
         setHasOptionsMenu(true);
 
-        VolleyRequest.requestJson(this, Constant.URL_JSON_MOVIE_LIST);
+        mPosition =  getArguments().getInt(TAB_POSITION);
 
+        Log.e(TAG,"Position : " + mPosition);
+
+        VolleyRequest.requestJson(this, setURLFromPosition(mPosition));
+
+        Log.e(TAG,"La url: " +  setURLFromPosition(mPosition));
+
+    }
+
+    private String setURLFromPosition(int position){
+
+        String url = "";
+
+        switch (position){
+
+            case 0:
+                url =  Constant.URL_JSON_MOVIE_LIST_LATEST;
+                break;
+            case 1:
+                url =  Constant.URL_JSON_MOVIE_LIST_POPULARITY;
+                break;
+            case 2:
+                url =  Constant.URL_JSON_MOVIE_LIST_HIGHTEST_RATE;
+                break;
+            default:
+                url =  Constant.URL_JSON_MOVIE_LIST_LATEST;
+                break;
+        }
+
+        return url;
     }
 
     @Override
@@ -130,7 +159,6 @@ public class MainActivityFragment extends Fragment implements VolleyListeners {
                 mMovies.add(movie);
             }
 
-            //mMovies = JSONActions.parse(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -142,9 +170,7 @@ public class MainActivityFragment extends Fragment implements VolleyListeners {
 
         current_page++;
 
-        VolleyRequest.requestJson(this, Constant.URL_JSON_MOVIE_LIST + Constant.NEW_PAGE + current_page);
-
-        Log.e(TAG,"Nueva pagina: " + current_page + " ,url: " + Constant.URL_JSON_MOVIE_LIST + Constant.NEW_PAGE + current_page);
+        VolleyRequest.requestJson(this, Constant.URL_JSON_MOVIE_LIST_POPULARITY + Constant.NEW_PAGE + current_page);
 
         mAdapter.notifyDataSetChanged();
 

@@ -86,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
             case R.id.action_settings:
-                //VolleyRequest.requestJson(this, Constant.URL_JSON_MOVIE_LIST);
                 return true;
         }
 

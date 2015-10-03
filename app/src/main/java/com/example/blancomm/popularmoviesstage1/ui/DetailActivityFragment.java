@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.example.blancomm.popularmoviesstage1.BackButtonListeners;
 import com.example.blancomm.popularmoviesstage1.R;
 import com.example.blancomm.popularmoviesstage1.VolleyListeners;
 import com.example.blancomm.popularmoviesstage1.model.MovieDetailInfo;
@@ -29,10 +28,9 @@ import org.json.JSONObject;
 public class DetailActivityFragment extends Fragment implements VolleyListeners {
 
     private String mIdMovie;
-    private NetworkImageView mImageDetail;
+    private NetworkImageView mImageDetail, mThumbnail;
     private TextView mTextDetail;
     private CollapsingToolbarLayout collapsingToolbar;
-    private BackButtonListeners detailsInterface;
 
     public DetailActivityFragment() {
     }
@@ -49,12 +47,6 @@ public class DetailActivityFragment extends Fragment implements VolleyListeners 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        if (!(getActivity() instanceof BackButtonListeners)) {
-            throw new ClassCastException("Hosting activity must implement BackHandlerInterface");
-        } else {
-            detailsInterface = (BackButtonListeners) getActivity();
-        }
 
         mIdMovie = getArguments().getString(Constant.TAG_ID_MOVIE);
         String urlDetail = Constant.URL_DETAIL_MOVIE + mIdMovie + "?" + Constant.API_KEY;
@@ -74,16 +66,10 @@ public class DetailActivityFragment extends Fragment implements VolleyListeners 
         return rootView;
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        detailsInterface.setSelectedFragment(this);
-    }
-
     private void instantiateObjects(View view) {
 
         mImageDetail = (NetworkImageView) view.findViewById(R.id.image_detail);
+        mThumbnail = (NetworkImageView)view.findViewById(R.id.thumbnail_film);
         mTextDetail = (TextView) view.findViewById(R.id.text_detail);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
@@ -97,12 +83,7 @@ public class DetailActivityFragment extends Fragment implements VolleyListeners 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               /* Snackbar.make(findViewById(R.id.coordinator_detail), "Añadido a favoritos", Snackbar.LENGTH_LONG).setAction("Action", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(DetailActivity.this, "Pelicula añadida", Toast.LENGTH_LONG).show();
-                    }
-                }).show();*/
+
             }
         });
     }
@@ -123,7 +104,8 @@ public class DetailActivityFragment extends Fragment implements VolleyListeners 
     private void injectData(MovieDetailInfo movieDetailInfo) {
 
         String urlImage = Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail();
-        VolleyRequest.requestImage(urlImage, mImageDetail);
+        VolleyRequest.requestImage(Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail(), mImageDetail);
+        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + movieDetailInfo.getThumnail(),mThumbnail);
         mTextDetail.setText(movieDetailInfo.getDescription());
         collapsingToolbar.setTitle(movieDetailInfo.getTitle());
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
@@ -132,20 +114,4 @@ public class DetailActivityFragment extends Fragment implements VolleyListeners 
         collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBarPlus1);*/
     }
 
-    private void backDismiss() {
-
-        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(Constant.TAG_DETAIL_FRAGMENT);
-        if (fragment != null) {
-            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
-            getActivity().getSupportFragmentManager().executePendingTransactions();
-            getActivity().finish();
-        }
-    }
-
-    public boolean onBackPressed() {
-
-        backDismiss();
-        return true;
-
-    }
 }

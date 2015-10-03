@@ -21,7 +21,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/imagen_prueba_detalle"
                 android:id="@+id/image_detail"
                 app:layout_collapseMode="parallax"/>
 
@@ -43,24 +42,124 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingTop="16dp">
+            android:orientation="vertical">
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp">
+                android:layout_margin="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp">
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:layout_width="match_parent"
+                    <com.android.volley.toolbox.NetworkImageView
+                        android:id="@+id/thumbnail_film"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/text_detail"/>
+                        android:layout_margin="4dp"
+                        android:scaleType="fitCenter"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginLeft="2dp"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TableRow android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_emoticon"
+                                android:layout_weight="1" />
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_emoticon"
+                                android:layout_weight="1" />
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_emoticon"
+                                android:layout_weight="1" />
+                        </TableRow>
+
+                        <TableRow android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:id="@+id/vote_count"
+                                android:layout_height="wrap_content"
+                                android:text="Votos"
+                                android:gravity="center"
+                                android:textSize="11sp"
+                                android:layout_weight="1" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:id="@+id/popularity"
+                                android:layout_height="wrap_content"
+                                android:text="Popularidad"
+                                android:textSize="11sp"
+                                android:gravity="center"
+                                android:layout_weight="1" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:id="@+id/hightest_rate"
+                                android:text="Rate"
+                                android:textSize="11sp"
+                                android:gravity="center"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1" />
+                        </TableRow>
+
+
+                        <TableRow android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp">
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_emoticon"
+                                android:layout_weight="1" />
+
+                            <ImageView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_emoticon"
+                                android:layout_weight="1" />
+                        </TableRow>
+
+                        <TableRow android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/imdb_id"
+                                android:text="Imdb"
+                                android:gravity="center"
+                                android:textSize="11sp"
+                                android:layout_weight="1" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/adults"
+                                android:text="Público"
+                                android:textSize="11sp"
+                                android:gravity="center"
+                                android:layout_weight="1" />
+
+                        </TableRow>
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -69,13 +168,21 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="8dp">
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="8dp">
+                    android:layout_margin="4dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="4dp"
+                        android:textSize="12sp"
+                        android:id="@+id/text_detail"/>
 
                     <TextView
                         android:layout_width="match_parent"
