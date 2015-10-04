@@ -1,10 +1,13 @@
 package com.example.blancomm.popularmoviesstage1.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,18 +28,20 @@ import org.json.JSONObject;
 /**
  * A placeholder fragment containing a simple view.
  */
-public class DetailActivityFragment extends Fragment implements VolleyListeners {
+public class DetailFragment extends Fragment implements VolleyListeners {
 
     private String mIdMovie;
     private NetworkImageView mImageDetail, mThumbnail;
     private TextView mTextDetail;
     private CollapsingToolbarLayout collapsingToolbar;
+    private AppBarLayout mAppBar;
+    private String TAG = DetailFragment.class.getSimpleName();
 
-    public DetailActivityFragment() {
+    public DetailFragment() {
     }
 
-    public static DetailActivityFragment newInstance(String id) {
-        DetailActivityFragment fragment = new DetailActivityFragment();
+    public static DetailFragment newInstance(String id) {
+        DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putString(Constant.TAG_ID_MOVIE, id);
         fragment.setArguments(args);
@@ -48,10 +53,11 @@ public class DetailActivityFragment extends Fragment implements VolleyListeners 
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        mIdMovie = getArguments().getString(Constant.TAG_ID_MOVIE);
+        mIdMovie = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
         String urlDetail = Constant.URL_DETAIL_MOVIE + mIdMovie + "?" + Constant.API_KEY;
 
         VolleyRequest.requestJson(this, urlDetail);
+
     }
 
     @Override
@@ -69,8 +75,9 @@ public class DetailActivityFragment extends Fragment implements VolleyListeners 
     private void instantiateObjects(View view) {
 
         mImageDetail = (NetworkImageView) view.findViewById(R.id.image_detail);
-        mThumbnail = (NetworkImageView)view.findViewById(R.id.thumbnail_film);
+        mThumbnail = (NetworkImageView)view.findViewById(R.id.thumbnail_film2);
         mTextDetail = (TextView) view.findViewById(R.id.text_detail);
+        mAppBar = (AppBarLayout) view.findViewById(R.id.view);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((DetailActivity) getActivity()).setSupportActionBar(toolbar);
@@ -84,6 +91,21 @@ public class DetailActivityFragment extends Fragment implements VolleyListeners 
             @Override
             public void onClick(View v) {
 
+            }
+        });
+
+        mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
+
+                Log.e(TAG,"Valor de i: " + i);
+                if (i >= -275)
+                {
+                    mThumbnail.setAlpha(100);
+                }
+                else {
+                    mThumbnail.setAlpha(i/i);
+                }
             }
         });
     }
@@ -110,8 +132,8 @@ public class DetailActivityFragment extends Fragment implements VolleyListeners 
         collapsingToolbar.setTitle(movieDetailInfo.getTitle());
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
-       /* collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBarPlus1);
-        collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBarPlus1);*/
+
+
     }
 
 }

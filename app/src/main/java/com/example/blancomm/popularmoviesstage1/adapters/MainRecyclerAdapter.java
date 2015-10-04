@@ -1,7 +1,10 @@
 package com.example.blancomm.popularmoviesstage1.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -39,7 +42,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final ViewHolder viewHolder, int i) {
         final MoviesInfo item = mItems.get(i);
 
         String thumbnail = item.getThumnail();
@@ -47,8 +50,6 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         VolleyRequest.requestImage(urlImage, viewHolder.mThumbnail);
 
         float rating = Float.parseFloat(item.getVoteAverage())/2;
-
-        Log.e(MainRecyclerAdapter.class.getSimpleName(),"RATING / 2: " + rating + " RATING REAL: " + item.getVoteAverage());
 
         if (rating >= 4.0){
             viewHolder.mCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorBackgroundCardViewHightest));
@@ -69,15 +70,26 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         }
 
         viewHolder.mIconLanguage.setImageResource(iconFlag);
-        //viewHolder.mThumbnail.setImageBitmap(thumbnail);
-        viewHolder.mThumbnail.setOnClickListener(new View.OnClickListener(){
+        viewHolder.mCard.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
+
                 Context context = view.getContext();
+
+                String transitionName = context.getString(R.string.transition_grid_to_detail);
                 Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT,item.getId());
-                context.startActivity(intent);
+                intent.putExtra(Intent.EXTRA_TEXT, item.getId());
+
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
+                                viewHolder.mThumbnail,   // The view which starts the transition
+                                transitionName    // The transitionName of the view we’re transitioning to
+                        );
+                ActivityCompat.startActivity((Activity) context, intent, options.toBundle());
+
+
+                //context.startActivity(intent);
             }
         });
 

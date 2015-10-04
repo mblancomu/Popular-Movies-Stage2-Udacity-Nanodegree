@@ -11,25 +11,10 @@ import com.example.blancomm.popularmoviesstage1.utils.Constant;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private DetailActivityFragment fragmentDetail;
-    private String mIdMovie;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-
-        //Get extras from latest when the user click on a element of list.
-        Intent intent = getIntent();
-        mIdMovie = intent.getStringExtra(Intent.EXTRA_TEXT);
-
-        //Pass the extras get the gridlist with the id of the movie to the detail fragment.
-        Bundle args = new Bundle();
-        args.putString(Constant.TAG_ID_MOVIE, mIdMovie);
-        fragmentDetail = DetailActivityFragment.newInstance(mIdMovie);
-
-        getSupportFragmentManager().beginTransaction().add(R.id.container, fragmentDetail,
-                Constant.TAG_DETAIL_FRAGMENT).addToBackStack(Constant.TAG_DETAIL_FRAGMENT).commit();
 
     }
 
