@@ -7,7 +7,7 @@
 
     <!--Text size on Thumbnail grid-->
     <dimen name="title_thumbnail">9sp</dimen>
-    <dimen name="votes_thumbnail">6sp</dimen>
+    <dimen name="votes_thumbnail">5sp</dimen>
 
     <!--Text size on Detail screen-->
     <dimen name="title_detail">14sp</dimen>

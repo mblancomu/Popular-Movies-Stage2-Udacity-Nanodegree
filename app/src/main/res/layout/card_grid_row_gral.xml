@@ -47,7 +47,7 @@
                     android:layout_gravity="left|center_vertical"
                     android:id="@+id/title_card"
                     android:textColor="@android:color/white"
-                    android:textSize="9sp"
+                    android:textSize="@dimen/title_thumbnail"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:layout_marginRight="20dp" />
@@ -82,7 +82,7 @@
                     android:layout_gravity="center"
                     android:textColor="@android:color/white"
                     android:id="@+id/votes"
-                    android:textSize="6sp"
+                    android:textSize="@dimen/votes_thumbnail"
                     android:gravity="center"
                     android:layout_weight="1" />
 

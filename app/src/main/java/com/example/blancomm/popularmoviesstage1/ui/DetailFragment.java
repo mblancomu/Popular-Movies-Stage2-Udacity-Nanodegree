@@ -1,16 +1,21 @@
 package com.example.blancomm.popularmoviesstage1.ui;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -32,10 +37,13 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     private String mIdMovie;
     private NetworkImageView mImageDetail, mThumbnail;
-    private TextView mTextDetail;
+    private TextView mTextDetail, mTextTitle;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout mAppBar;
     private String TAG = DetailFragment.class.getSimpleName();
+    private String mTitle;
+    private CardView mCardTitle, mCardHeader;
+    private int mInitialTitle = 0;
 
     public DetailFragment() {
     }
@@ -78,6 +86,9 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mThumbnail = (NetworkImageView)view.findViewById(R.id.thumbnail_film2);
         mTextDetail = (TextView) view.findViewById(R.id.text_detail);
         mAppBar = (AppBarLayout) view.findViewById(R.id.view);
+        mCardTitle = (CardView)view.findViewById(R.id.card_title);
+        mCardHeader = (CardView)view.findViewById(R.id.card_header);
+        mTextTitle = (TextView)view.findViewById(R.id.title_detail);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((DetailActivity) getActivity()).setSupportActionBar(toolbar);
@@ -95,16 +106,41 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         });
 
         mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
 
                 Log.e(TAG,"Valor de i: " + i);
-                if (i >= -275)
+                if (i >= -418 && i < 0)
                 {
-                    mThumbnail.setAlpha(100);
+                   // mThumbnail.animate().translationY(0 - mThumbnail.getHeight());
+                    collapsingToolbar.setTitle(mTitle);
+                    collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+                    collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+                    mInitialTitle++;
+
+
+                }else if (i == 0){
+
+                    if (mInitialTitle == 0) {
+                        mCardTitle.setVisibility(View.VISIBLE);
+                        mTextTitle.setText(mTitle);
+                        mTextTitle.setVisibility(View.VISIBLE);
+                        mCardHeader.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                    } else {
+
+                        mCardTitle.setVisibility(View.GONE);
+                        mCardHeader.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mThumbnail.getHeight() - mThumbnail.getHeight()/7));
+                    }
                 }
                 else {
-                    mThumbnail.setAlpha(i/i);
+
+                    mInitialTitle++;
+                    mThumbnail.animate().translationY(mThumbnail.getHeight() / 3);
+                    mCardHeader.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,mThumbnail.getHeight() + 10));
+                    mCardTitle.setVisibility(View.GONE);
+
                 }
             }
         });
@@ -127,11 +163,12 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         String urlImage = Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail();
         VolleyRequest.requestImage(Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail(), mImageDetail);
-        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + movieDetailInfo.getThumnail(),mThumbnail);
+        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + getActivity().getString(R.string.width_image_thumb) + movieDetailInfo.getThumnail(), mThumbnail);
         mTextDetail.setText(movieDetailInfo.getDescription());
-        collapsingToolbar.setTitle(movieDetailInfo.getTitle());
-        collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-        collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+        mTitle = movieDetailInfo.getTitle();
+        collapsingToolbar.setTitle("");
+        //collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+        //collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
 
     }

@@ -101,7 +101,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
                 ActivityCompat.startActivity((Activity) context, intent, options.toBundle());
 
 
-                //context.startActivity(intent);
+                context.startActivity(intent);
             }
         });
 
