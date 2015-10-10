@@ -18,5 +18,5 @@
     <!--Transitions effects-->
     <string name="transition_grid_to_detail">DetailFragment</string>
 
-    <string name="width_image_thumb">w185/</string>
+    <string name="width_image_thumb">w342/</string>
 </resources>

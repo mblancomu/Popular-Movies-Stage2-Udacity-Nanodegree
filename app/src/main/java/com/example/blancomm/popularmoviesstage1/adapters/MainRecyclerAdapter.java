@@ -28,6 +28,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
 
     private List<MoviesInfo> mItems;
     private Context mContext;
+    private String TAG = MainRecyclerAdapter.class.getSimpleName();
 
     public MainRecyclerAdapter(List<MoviesInfo> items, Context context) {
         mItems = items;
@@ -46,8 +47,15 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         final MoviesInfo item = mItems.get(i);
 
         String thumbnail = item.getThumnail();
-        String urlImage = Constant.URL_THUMNAIL_IMAGE + thumbnail;
-        VolleyRequest.requestImage(urlImage, viewHolder.mThumbnail);
+        String year;
+
+        String urlImage = Constant.URL_THUMNAIL_IMAGE + mContext.getString(R.string.width_image_thumb)+ thumbnail;
+
+        if (!thumbnail.equals("null")) {
+            VolleyRequest.requestImage(urlImage, viewHolder.mThumbnail);
+        }else{
+            viewHolder.mThumbnail.setErrorImageResId(R.drawable.ic_warning_black_36dp);
+        }
 
         float rating = Float.parseFloat(item.getVoteAverage())/2;
 
@@ -55,9 +63,13 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
             viewHolder.mCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorBackgroundCardViewHightest));
         }
 
-        String year = item.getReleaseDate().substring(0,4);
+        if (item.getReleaseDate().length() >= 4) {
+             year = item.getReleaseDate().substring(0, 4);
+        }else {
+            year = "No date";
+        }
 
-        viewHolder.mVotes.setText(item.getVoteCount() + " votes");
+        viewHolder.mVotes.setText(item.getVoteCount());
         viewHolder.mRatingBar.setRating(rating);
         viewHolder.mTitle.setText(item.getTitle()+ " (" + year + ")");
 

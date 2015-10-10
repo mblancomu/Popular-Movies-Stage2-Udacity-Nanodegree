@@ -18,6 +18,7 @@ import com.example.blancomm.popularmoviesstage1.adapters.EndlessRecyclerOnScroll
 import com.example.blancomm.popularmoviesstage1.adapters.MainRecyclerAdapter;
 import com.example.blancomm.popularmoviesstage1.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage1.network.VolleyRequest;
+import com.example.blancomm.popularmoviesstage1.utils.ConfigDevice;
 import com.example.blancomm.popularmoviesstage1.utils.Constant;
 
 import org.json.JSONArray;
@@ -97,14 +98,7 @@ public class MainFragment extends Fragment implements VolleyListeners {
         mMovies = new ArrayList<MoviesInfo>();
         mAdapter = new MainRecyclerAdapter(mMovies, getActivity());
 
-        Display display = ((WindowManager) getActivity().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-        int orientation = display.getRotation();
-
-        if (orientation == 0){
-            mLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.columns_grid_portait));
-        }else {
-            mLayoutManager = new GridLayoutManager(getActivity(), getResources().getInteger(R.integer.columns_grid_landscape));
-        }
+        mLayoutManager = new GridLayoutManager(getActivity(), ConfigDevice.getNumberColumnsGrid(getActivity()));
 
         View v =  inflater.inflate(R.layout.fragment_main, container, false);
         RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);

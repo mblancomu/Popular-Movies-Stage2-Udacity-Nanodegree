@@ -3,7 +3,7 @@ package com.example.blancomm.popularmoviesstage1.utils;
 public class Constant {
 
     //API Key MoviesDB
-    public static final String API_KEY = "api_key=24a07050c1c434bbbe6999638acbef22";
+    public static final String API_KEY = "api_key=********************";
     public static final String NEW_PAGE = "&page=";
 
     //Constants for the differente URLs
@@ -13,8 +13,8 @@ public class Constant {
             + API_KEY;
     public static final String URL_JSON_MOVIE_LIST_HIGHTEST_RATE = "http://api.themoviedb.org/3/discover/movie?sort_by=vote_average.desc&"
             + API_KEY;
-    public static final String URL_DETAIL_IMAGE = "https://image.tmdb.org/t/p/w342/";
-    public static final String URL_THUMNAIL_IMAGE = "https://image.tmdb.org/t/p/w342/";
+    public static final String URL_DETAIL_IMAGE = "https://image.tmdb.org/t/p/w500/";
+    public static final String URL_THUMNAIL_IMAGE = "https://image.tmdb.org/t/p/";
     public static final String URL_THUMNAIL_IMAGE_DETAIL = "https://image.tmdb.org/t/p/w185/";
     public static final String URL_DETAIL_MOVIE = "https://api.themoviedb.org/3/movie/";
     public static final String URL_THUMB_MOVIE_DB = "";
