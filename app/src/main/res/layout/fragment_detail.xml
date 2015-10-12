@@ -38,7 +38,7 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="-30dp"
         android:id="@+id/nested"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -48,130 +48,7 @@
             android:background="@android:color/transparent"
             android:orientation="vertical">
 
-            <android.support.v7.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/card_header"
-                android:layout_marginLeft="2dp"
-                android:layout_marginRight="2dp"
-                android:layout_weight="1">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/transparent"
-                    android:orientation="horizontal">
-
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginLeft="120dp"
-                        android:gravity="center"
-                        android:background="@android:color/transparent"
-                        android:orientation="vertical">
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <ImageView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_emoticon" />
-
-                            <ImageView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_emoticon" />
-
-                            <ImageView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_emoticon" />
-                        </TableRow>
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:id="@+id/vote_count"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="Votos"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/popularity"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="Popularidad"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/hightest_rate"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="Rate"
-                                android:textSize="11sp" />
-                        </TableRow>
-
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp">
-
-                            <ImageView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_emoticon" />
-
-                            <ImageView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_emoticon" />
-                        </TableRow>
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
-
-                            <TextView
-                                android:id="@+id/imdb_id"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="Imdb"
-                                android:textSize="11sp" />
-
-                            <TextView
-                                android:id="@+id/adults"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="Público"
-                                android:textSize="11sp" />
-
-                        </TableRow>
-                    </LinearLayout>
-                </LinearLayout>
-            </android.support.v7.widget.CardView>
+           <include layout="@layout/card_header_detail_collapse"></include>
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -228,21 +105,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_anchorGravity="bottom|right|end"
-        app:layout_anchor="@id/view"
+        app:layout_anchor="@id/nested"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/ic_favorite_normal" />
-
-    <com.android.volley.toolbox.NetworkImageView
-        android:id="@+id/thumbnail_film2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="2dp"
-        android:scaleType="fitCenter"
-        app:layout_anchor="@id/card_header"
-        app:paddingStart="@dimen/title_detail"
-        app:layout_anchorGravity="top|left|start"
-        android:transitionName="@string/transition_grid_to_detail"
-        app:layout_collapseMode="pin"/>
 
 </android.support.design.widget.CoordinatorLayout>
 

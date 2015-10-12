@@ -8,14 +8,18 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
@@ -23,6 +27,7 @@ import com.example.blancomm.popularmoviesstage1.R;
 import com.example.blancomm.popularmoviesstage1.VolleyListeners;
 import com.example.blancomm.popularmoviesstage1.model.MovieDetailInfo;
 import com.example.blancomm.popularmoviesstage1.network.VolleyRequest;
+import com.example.blancomm.popularmoviesstage1.utils.AnimationsUtils;
 import com.example.blancomm.popularmoviesstage1.utils.Constant;
 import com.example.blancomm.popularmoviesstage1.utils.JSONActions;
 import com.example.blancomm.popularmoviesstage1.utils.UtilsView;
@@ -37,13 +42,17 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     private String mIdMovie;
     private NetworkImageView mImageDetail, mThumbnail;
-    private TextView mTextDetail, mTextTitle;
+    private TextView mTextDetail,mVotes, mRates, mPopulrity, mImdb;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout mAppBar;
     private String TAG = DetailFragment.class.getSimpleName();
     private String mTitle;
-    private CardView mCardTitle, mCardHeader;
-    private int mInitialTitle = 0;
+    private CardView mCardHeaderCollapse;
+    private NestedScrollView mScrollView;
+    private ImageView mIconRate,mIconPopularity, mIconVotes, mIconImdb;
+    private MovieDetailInfo movieDetail;
+    private TableRow mRowAdults;
+    private LinearLayout mLinearIcons;
 
     public DetailFragment() {
     }
@@ -86,9 +95,23 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mThumbnail = (NetworkImageView)view.findViewById(R.id.thumbnail_film2);
         mTextDetail = (TextView) view.findViewById(R.id.text_detail);
         mAppBar = (AppBarLayout) view.findViewById(R.id.view);
-        mCardTitle = (CardView)view.findViewById(R.id.card_title);
-        mCardHeader = (CardView)view.findViewById(R.id.card_header);
-        mTextTitle = (TextView)view.findViewById(R.id.title_detail);
+        mImdb = (TextView)view.findViewById(R.id.imdb_id);
+        mPopulrity = (TextView)view.findViewById(R.id.popularity);
+        mRates = (TextView)view.findViewById(R.id.hightest_rate);
+        mVotes = (TextView)view.findViewById(R.id.vote_count);
+        mScrollView = (NestedScrollView)view.findViewById(R.id.nested);
+        mIconImdb = (ImageView)view.findViewById(R.id.iv_imdb);
+        mIconVotes= (ImageView)view.findViewById(R.id.iv_votes);
+        mIconPopularity = (ImageView)view.findViewById(R.id.iv_popular);
+        mIconRate = (ImageView)view.findViewById(R.id.iv_rate);
+        mCardHeaderCollapse = (CardView)view.findViewById(R.id.card_header_collapse);
+        mRowAdults = (TableRow)view.findViewById(R.id.tr_adults);
+        mLinearIcons = (LinearLayout)view.findViewById(R.id.ll_icons_header);
+
+        AnimationsUtils.fadeInAlphaIcons(getActivity(), mIconVotes, R.anim.tween_votes);
+        AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconPopularity, R.anim.tween_popularity);
+        AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconRate, R.anim.tween_rate);
+        AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconImdb, R.anim.tween_imdb);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((DetailActivity) getActivity()).setSupportActionBar(toolbar);
@@ -110,36 +133,26 @@ public class DetailFragment extends Fragment implements VolleyListeners {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
 
-                Log.e(TAG,"Valor de i: " + i);
-                if (i >= -418 && i < 0)
-                {
-                   // mThumbnail.animate().translationY(0 - mThumbnail.getHeight());
-                    collapsingToolbar.setTitle(mTitle);
-                    collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-                    collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
-                    mInitialTitle++;
+                Log.e(TAG, "Valor de i: " + i);
 
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
-                }else if (i == 0){
+                if (i >= -418 && i < 0) {
 
-                    if (mInitialTitle == 0) {
-                        mCardTitle.setVisibility(View.VISIBLE);
-                        mTextTitle.setText(mTitle);
-                        mTextTitle.setVisibility(View.VISIBLE);
-                        mCardHeader.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                    mScrollView.animate().translationY(60).setInterpolator(new DecelerateInterpolator(2));
+                    mCardHeaderCollapse.setCardBackgroundColor(getResources().getColor(R.color.white));
+                    layoutParams.setMargins(0, 0, 0, 0);
+                    mLinearIcons.setLayoutParams(layoutParams);
+                    mRowAdults.setVisibility(View.VISIBLE);
 
-                    } else {
+                } else if (i == 0) {
 
-                        mCardTitle.setVisibility(View.GONE);
-                        mCardHeader.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, mThumbnail.getHeight() - mThumbnail.getHeight()/7));
-                    }
-                }
-                else {
-
-                    mInitialTitle++;
-                    mThumbnail.animate().translationY(mThumbnail.getHeight() / 3);
-                    mCardHeader.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,mThumbnail.getHeight() + 10));
-                    mCardTitle.setVisibility(View.GONE);
+                    mScrollView.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+                    mCardHeaderCollapse.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
+                    layoutParams.setMargins(0,55,0,0);
+                    mLinearIcons.setLayoutParams(layoutParams);
+                    mRowAdults.setVisibility(View.GONE);
 
                 }
             }
@@ -148,8 +161,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     @Override
     public void onFinishJsonRequest(JSONObject jsonObject) {
-
-        MovieDetailInfo movieDetail;
 
         try {
             movieDetail = JSONActions.parseDetail(jsonObject);
@@ -161,14 +172,18 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     private void injectData(MovieDetailInfo movieDetailInfo) {
 
-        String urlImage = Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail();
         VolleyRequest.requestImage(Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail(), mImageDetail);
-        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + getActivity().getString(R.string.width_image_thumb) + movieDetailInfo.getThumnail(), mThumbnail);
+        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + getActivity().getString(R.string.width_image_thumb_detail) + movieDetailInfo.getThumnail(), mThumbnail);
         mTextDetail.setText(movieDetailInfo.getDescription());
         mTitle = movieDetailInfo.getTitle();
-        collapsingToolbar.setTitle("");
-        //collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
-        //collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
+        collapsingToolbar.setTitle(mTitle);
+
+        mImdb.setText(movieDetailInfo.getImdb_id());
+        mVotes.setText(movieDetailInfo.getVoteCount());
+        mRates.setText(movieDetailInfo.getVoteAverage());
+        mPopulrity.setText(movieDetailInfo.getPopularity());
+        collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
+        collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
 
     }

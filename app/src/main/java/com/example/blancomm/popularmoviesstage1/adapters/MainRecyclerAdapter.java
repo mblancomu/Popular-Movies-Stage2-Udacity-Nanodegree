@@ -93,14 +93,14 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra(Intent.EXTRA_TEXT, item.getId());
 
-                ActivityOptionsCompat options =
+       /*         ActivityOptionsCompat options =
                         ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
                                 viewHolder.mThumbnail,   // The view which starts the transition
                                 transitionName    // The transitionName of the view we’re transitioning to
                         );
                 ActivityCompat.startActivity((Activity) context, intent, options.toBundle());
 
-
+*/
                 context.startActivity(intent);
             }
         });
