@@ -25,4 +25,44 @@ public class UtilsView {
         } catch (Exception ignored) {
         }
     }
+
+    public static int setFlagLanguageDetail(String idLanguage){
+
+        int icon = 0;
+
+        switch (idLanguage){
+            case "en":
+                icon = R.drawable.flag_uk;
+                break;
+            case "es":
+                icon = R.drawable.flag_spain;
+                break;
+            case "fr":
+                icon = R.drawable.flag_france;
+                break;
+            case "de":
+                icon = R.drawable.flag_germany;
+                break;
+            case "ja":
+                icon = R.drawable.flag_japan;
+                break;
+            case "zh":
+                icon = R.drawable.flag_china;
+                break;
+            case "it":
+                icon = R.drawable.flag_italy;
+                break;
+            case "pt":
+                icon = R.drawable.flag_portugal;
+                break;
+            case "ru":
+                icon = R.drawable.flag_russia;
+                break;
+            default:
+                icon = R.drawable.flag_uk;
+                break;
+        }
+
+        return icon;
+    }
 }

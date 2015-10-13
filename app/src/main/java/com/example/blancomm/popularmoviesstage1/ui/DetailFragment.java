@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
@@ -42,14 +41,14 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     private String mIdMovie;
     private NetworkImageView mImageDetail, mThumbnail;
-    private TextView mTextDetail,mVotes, mRates, mPopulrity, mImdb;
+    private TextView mTextDetail,mVotes, mRates, mPopulrity, mDate;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout mAppBar;
     private String TAG = DetailFragment.class.getSimpleName();
     private String mTitle;
     private CardView mCardHeaderCollapse;
     private NestedScrollView mScrollView;
-    private ImageView mIconRate,mIconPopularity, mIconVotes, mIconImdb;
+    private ImageView mIconRate,mIconPopularity, mIconVotes, mIconDate, mFlag;
     private MovieDetailInfo movieDetail;
     private TableRow mRowAdults;
     private LinearLayout mLinearIcons;
@@ -95,23 +94,24 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mThumbnail = (NetworkImageView)view.findViewById(R.id.thumbnail_film2);
         mTextDetail = (TextView) view.findViewById(R.id.text_detail);
         mAppBar = (AppBarLayout) view.findViewById(R.id.view);
-        mImdb = (TextView)view.findViewById(R.id.imdb_id);
+        mDate = (TextView)view.findViewById(R.id.imdb_id);
         mPopulrity = (TextView)view.findViewById(R.id.popularity);
         mRates = (TextView)view.findViewById(R.id.hightest_rate);
         mVotes = (TextView)view.findViewById(R.id.vote_count);
         mScrollView = (NestedScrollView)view.findViewById(R.id.nested);
-        mIconImdb = (ImageView)view.findViewById(R.id.iv_imdb);
+        mIconDate = (ImageView)view.findViewById(R.id.iv_date);
         mIconVotes= (ImageView)view.findViewById(R.id.iv_votes);
         mIconPopularity = (ImageView)view.findViewById(R.id.iv_popular);
         mIconRate = (ImageView)view.findViewById(R.id.iv_rate);
         mCardHeaderCollapse = (CardView)view.findViewById(R.id.card_header_collapse);
         mRowAdults = (TableRow)view.findViewById(R.id.tr_adults);
         mLinearIcons = (LinearLayout)view.findViewById(R.id.ll_icons_header);
+        mFlag = (ImageView)view.findViewById(R.id.iv_flag);
 
         AnimationsUtils.fadeInAlphaIcons(getActivity(), mIconVotes, R.anim.tween_votes);
         AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconPopularity, R.anim.tween_popularity);
         AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconRate, R.anim.tween_rate);
-        AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconImdb, R.anim.tween_imdb);
+        AnimationsUtils.fadeInAlphaIcons(getActivity(), mIconDate, R.anim.tween_imdb);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((DetailActivity) getActivity()).setSupportActionBar(toolbar);
@@ -178,13 +178,14 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mTitle = movieDetailInfo.getTitle();
         collapsingToolbar.setTitle(mTitle);
 
-        mImdb.setText(movieDetailInfo.getImdb_id());
+        mDate.setText(movieDetailInfo.getReleaseDate());
         mVotes.setText(movieDetailInfo.getVoteCount());
         mRates.setText(movieDetailInfo.getVoteAverage());
         mPopulrity.setText(movieDetailInfo.getPopularity());
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
+        mFlag.setImageResource(UtilsView.setFlagLanguageDetail(movieDetailInfo.getOriginalLanguage()));
 
     }
 

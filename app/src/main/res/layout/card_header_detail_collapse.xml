@@ -10,13 +10,6 @@
     app:cardCornerRadius="2dp"
     app:cardElevation="0dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:background="@android:color/transparent">
-
-    </View>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -98,7 +91,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:maxEms="4"
+                    android:maxLength="4"
+                    android:ellipsize="end"
                     android:text="Popularidad"
                     android:textSize="11sp" />
 
@@ -118,11 +112,11 @@
                     android:src="@drawable/ic_rates" />
 
                 <ImageView
-                    android:id="@+id/iv_imdb"
+                    android:id="@+id/iv_date"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:src="@drawable/ic_imdb" />
+                    android:src="@drawable/ic_date" />
 
             </TableRow>
 
@@ -150,5 +144,24 @@
 
             </TableRow>
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:layout_weight="1"> </View>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:id="@+id/iv_flag" />
+
     </LinearLayout>
 </android.support.v7.widget.CardView>

@@ -21,6 +21,7 @@ import com.example.blancomm.popularmoviesstage1.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage1.network.VolleyRequest;
 import com.example.blancomm.popularmoviesstage1.ui.DetailActivity;
 import com.example.blancomm.popularmoviesstage1.utils.Constant;
+import com.example.blancomm.popularmoviesstage1.utils.UtilsView;
 
 import java.util.List;
 
@@ -73,34 +74,15 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         viewHolder.mRatingBar.setRating(rating);
         viewHolder.mTitle.setText(item.getTitle()+ " (" + year + ")");
 
-        int iconFlag =  0;
-
-        if (item.getOriginalLanguage().equals("en")) {
-            iconFlag = R.drawable.ic_flag_uk;
-        }else {
-            iconFlag = R.drawable.ic_flag_spain;
-        }
-
-        viewHolder.mIconLanguage.setImageResource(iconFlag);
+        viewHolder.mIconLanguage.setImageResource(UtilsView.setFlagLanguageDetail(item.getOriginalLanguage()));
         viewHolder.mCard.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
 
                 Context context = view.getContext();
-
-                String transitionName = context.getString(R.string.transition_grid_to_detail);
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra(Intent.EXTRA_TEXT, item.getId());
-
-       /*         ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context,
-                                viewHolder.mThumbnail,   // The view which starts the transition
-                                transitionName    // The transitionName of the view we’re transitioning to
-                        );
-                ActivityCompat.startActivity((Activity) context, intent, options.toBundle());
-
-*/
                 context.startActivity(intent);
             }
         });

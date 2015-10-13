@@ -3,7 +3,7 @@ package com.example.blancomm.popularmoviesstage1.utils;
 public class Constant {
 
     //API Key MoviesDB
-    public static final String API_KEY = "api_key=++++++++++++++++";
+    public static final String API_KEY = "api_key=**********************";
     public static final String NEW_PAGE = "&page=";
 
     //Constants for the differente URLs
