@@ -65,4 +65,77 @@ public class UtilsView {
 
         return icon;
     }
+
+    public static int setIconGenre(String genre){
+
+        int icon = 0;
+
+        switch (genre){
+            case "Science Fiction":
+                icon = R.drawable.ic_sci_fi;
+                break;
+            case "Action":
+                icon = R.drawable.ic_actions;
+                break;
+            case "Adventure":
+                icon = R.drawable.ic_adventures;
+                break;
+            case "Animation":
+                icon = R.drawable.ic_fantasy;
+                break;
+            case "Comedy":
+                icon = R.drawable.ic_comedy;
+                break;
+            case "Crime":
+                icon = R.drawable.ic_crime;
+                break;
+            case "Documentary":
+                icon = R.drawable.ic_documentary;
+                break;
+            case "Drama":
+                icon = R.drawable.ic_drama;
+                break;
+            case "Family":
+                icon = R.drawable.ic_comedy;
+                break;
+            case "Fantasy":
+                icon = R.drawable.ic_fantasy;
+                break;
+            case "Foreign":
+                icon = R.drawable.ic_adventures;
+                break;
+            case "History":
+                icon = R.drawable.ic_documentary;
+                break;
+            case "Horror":
+                icon = R.drawable.ic_horror;
+                break;
+            case "Music":
+                icon = R.drawable.ic_comedy;
+                break;
+            case "Mystery":
+                icon = R.drawable.ic_triller;
+                break;
+            case "Romance":
+                icon = R.drawable.ic_novel;
+                break;
+            case "TV Movie":
+                icon = R.drawable.ic_documentary;
+                break;
+            case "Thriller":
+                icon = R.drawable.ic_triller;
+                break;
+            case "War":
+                icon = R.drawable.ic_actions;
+                break;
+            case "Western":
+                icon = R.drawable.ic_western;
+                break;
+            default:
+                icon = R.drawable.ic_comedy;
+                break;
+        }
+
+        return icon;
+    }
 }

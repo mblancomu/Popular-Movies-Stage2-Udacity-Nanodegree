@@ -1,6 +1,7 @@
 package com.example.blancomm.popularmoviesstage1.ui;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +31,17 @@ import com.example.blancomm.popularmoviesstage1.network.VolleyRequest;
 import com.example.blancomm.popularmoviesstage1.utils.AnimationsUtils;
 import com.example.blancomm.popularmoviesstage1.utils.Constant;
 import com.example.blancomm.popularmoviesstage1.utils.JSONActions;
+import com.example.blancomm.popularmoviesstage1.utils.URLUtils;
 import com.example.blancomm.popularmoviesstage1.utils.UtilsView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -41,7 +50,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     private String mIdMovie;
     private NetworkImageView mImageDetail, mThumbnail;
-    private TextView mTextDetail,mVotes, mRates, mPopulrity, mDate;
+    private TextView mVotes, mRates, mPopulrity, mDate;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout mAppBar;
     private String TAG = DetailFragment.class.getSimpleName();
@@ -52,6 +61,8 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private MovieDetailInfo movieDetail;
     private TableRow mRowAdults;
     private LinearLayout mLinearIcons;
+    private CardView mCardGenres;
+    private LinearLayout mIconsGenres, mMainView;
 
     public DetailFragment() {
     }
@@ -68,11 +79,20 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
 
         mIdMovie = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
-        String urlDetail = Constant.URL_DETAIL_MOVIE + mIdMovie + "?" + Constant.API_KEY;
 
-        VolleyRequest.requestJson(this, urlDetail);
+        try {
+
+            VolleyRequest.requestJson(this, URLUtils.getURLMovieDtail(mIdMovie));
+
+            Log.e(TAG,"Videos: " + URLUtils.getURLMovieVideos(mIdMovie));
+
+        } catch (UnsupportedEncodingException e) {
+
+            e.printStackTrace();
+        }
 
     }
 
@@ -92,7 +112,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         mImageDetail = (NetworkImageView) view.findViewById(R.id.image_detail);
         mThumbnail = (NetworkImageView)view.findViewById(R.id.thumbnail_film2);
-        mTextDetail = (TextView) view.findViewById(R.id.text_detail);
         mAppBar = (AppBarLayout) view.findViewById(R.id.view);
         mDate = (TextView)view.findViewById(R.id.imdb_id);
         mPopulrity = (TextView)view.findViewById(R.id.popularity);
@@ -107,6 +126,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mRowAdults = (TableRow)view.findViewById(R.id.tr_adults);
         mLinearIcons = (LinearLayout)view.findViewById(R.id.ll_icons_header);
         mFlag = (ImageView)view.findViewById(R.id.iv_flag);
+        mCardGenres = (CardView)view.findViewById(R.id.card_genres);
+        mIconsGenres = (LinearLayout)view.findViewById(R.id.ll_genres);
+        mMainView = (LinearLayout)view.findViewById(R.id.ll_main);
+
 
         AnimationsUtils.fadeInAlphaIcons(getActivity(), mIconVotes, R.anim.tween_votes);
         AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconPopularity, R.anim.tween_popularity);
@@ -170,11 +193,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
     }
 
-    private void injectData(MovieDetailInfo movieDetailInfo) {
+    private void injectData(MovieDetailInfo movieDetailInfo) throws JSONException {
 
         VolleyRequest.requestImage(Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail(), mImageDetail);
         VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + getActivity().getString(R.string.width_image_thumb_detail) + movieDetailInfo.getThumnail(), mThumbnail);
-        mTextDetail.setText(movieDetailInfo.getDescription());
         mTitle = movieDetailInfo.getTitle();
         collapsingToolbar.setTitle(mTitle);
 
@@ -182,10 +204,119 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mVotes.setText(movieDetailInfo.getVoteCount());
         mRates.setText(movieDetailInfo.getVoteAverage());
         mPopulrity.setText(movieDetailInfo.getPopularity());
+        putIconsGenres(JSONActions.getGenres(movieDetailInfo.getGenreIds()));
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        setSynopsisCard(inflater);
+        setRuntimeCard(inflater);
+        setCountryCard(inflater);
+        setHomepageCard(inflater);
+        setImdbCard(inflater);
+        setVideosCard(inflater);
+
         mFlag.setImageResource(UtilsView.setFlagLanguageDetail(movieDetailInfo.getOriginalLanguage()));
+
+    }
+
+    private void putIconsGenres(List<String> genres){
+
+        int genresSize = genres.size();
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        if (genresSize > 0){
+            mCardGenres.setVisibility(View.VISIBLE);
+        }else {
+            mCardGenres.setVisibility(View.GONE);
+        }
+
+        for (int i = 0; i < genresSize; i++){
+
+            View view = inflater.inflate(R.layout.item_card_genres, mIconsGenres, false);
+
+            ImageView imageView = (ImageView)view.findViewById(R.id.iv_genre);
+            TextView textView = (TextView)view.findViewById(R.id.tv_genre);
+            textView.setText(genres.get(i).toString().replace(" ", " \n"));
+            imageView.setImageResource(UtilsView.setIconGenre(genres.get(i).toString()));
+            lp.setMargins(15, 15, 15, 15);
+            view.setLayoutParams(lp);
+            mIconsGenres.addView(view);
+
+        }
+
+    }
+
+    private void setSynopsisCard(LayoutInflater inflater){
+
+        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+
+        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.synopsis));
+        ((TextView)view.findViewById(R.id.tv_description)).setText(movieDetail.getDescription());
+        mMainView.addView(view);
+    }
+
+    private void setRuntimeCard(LayoutInflater inflater){
+
+        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+
+        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.runtime));
+        ((TextView)view.findViewById(R.id.tv_description)).setText(movieDetail.getRuntime() + "  min");
+        mMainView.addView(view);
+    }
+
+    private void setCountryCard(LayoutInflater inflater) throws JSONException {
+
+        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+        int countriesSize = JSONActions.getCountries(movieDetail.getProduction_countries()).size();
+        StringBuilder countries = new StringBuilder(countriesSize);
+
+        for (int i = 0; i < countriesSize;i++){
+
+            if (countriesSize > 1) {
+                countries.append(", " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString());
+            }
+
+             countries.append(JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString());
+
+        }
+
+        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.country));
+        ((TextView)view.findViewById(R.id.tv_description)).setText(countries.toString());
+        mMainView.addView(view);
+
+    }
+
+    private void setVideosCard(LayoutInflater inflater){
+
+        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+
+        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.videos));
+        ((TextView)view.findViewById(R.id.tv_description)).setText(movieDetail.getProduction_countries());
+        mMainView.addView(view);
+
+    }
+
+    private void setImdbCard(LayoutInflater inflater){
+
+        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+
+        String urlImdb = "http://www.imdb.com/title/" + movieDetail.getImdb_id() + "/?ref_=inth_ov_tt";
+                ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.imdb));
+        ((TextView)view.findViewById(R.id.tv_description)).setText(urlImdb);
+        mMainView.addView(view);
+
+    }
+
+    private void setHomepageCard(LayoutInflater inflater){
+
+        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+
+        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.homepage));
+        ((TextView)view.findViewById(R.id.tv_description)).setText(movieDetail.getHomepage());
+        mMainView.addView(view);
 
     }
 

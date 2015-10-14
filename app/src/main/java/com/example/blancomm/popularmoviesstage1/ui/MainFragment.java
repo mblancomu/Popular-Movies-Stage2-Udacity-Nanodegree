@@ -20,11 +20,13 @@ import com.example.blancomm.popularmoviesstage1.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage1.network.VolleyRequest;
 import com.example.blancomm.popularmoviesstage1.utils.ConfigDevice;
 import com.example.blancomm.popularmoviesstage1.utils.Constant;
+import com.example.blancomm.popularmoviesstage1.utils.URLUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,36 +54,40 @@ public class MainFragment extends Fragment implements VolleyListeners {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRetainInstance(true);
         setHasOptionsMenu(true);
 
         mPosition =  getArguments().getInt(TAB_POSITION);
 
         Log.e(TAG,"Position : " + mPosition);
 
-        VolleyRequest.requestJson(this, setURLFromPosition(mPosition));
+        try {
+            VolleyRequest.requestJson(this, setURLFromPosition(mPosition));
 
-        Log.e(TAG,"La url: " +  setURLFromPosition(mPosition));
+            Log.e(TAG, "Url: " + setURLFromPosition(mPosition));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    private String setURLFromPosition(int position){
+    private String setURLFromPosition(int position) throws UnsupportedEncodingException {
 
         String url = "";
 
         switch (position){
 
             case 0:
-                url =  Constant.URL_JSON_MOVIE_LIST_LATEST;
+                url = URLUtils.getURLLatest(current_page);
                 break;
             case 1:
-                url =  Constant.URL_JSON_MOVIE_LIST_POPULARITY;
+                url =  URLUtils.getURLPopularity(current_page);
                 break;
             case 2:
-                url =  Constant.URL_JSON_MOVIE_LIST_HIGHTEST_RATE;
+                url =  URLUtils.getURLRate(current_page);
                 break;
             default:
-                url =  Constant.URL_JSON_MOVIE_LIST_LATEST;
+                url =  URLUtils.getURLLatest(current_page);
                 break;
         }
 
@@ -109,7 +115,11 @@ public class MainFragment extends Fragment implements VolleyListeners {
             @Override
             public void onLoadMore(int current_page) {
 
-                loadMoreData(current_page);
+                try {
+                    loadMoreData(current_page);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -135,20 +145,20 @@ public class MainFragment extends Fragment implements VolleyListeners {
                 JSONObject jsonMovie = jsonMovies.getJSONObject(i);
 
                 MoviesInfo movie = new MoviesInfo();
-                movie.setAdult(jsonMovie.getString("adult"));
-                movie.setDescription(jsonMovie.getString("overview"));
-                movie.setGenreIds(jsonMovie.getString("genre_ids"));
-                movie.setTitle(jsonMovie.getString("title"));
-                movie.setId(jsonMovie.getString("id"));
-                movie.setImageDetail(jsonMovie.getString("backdrop_path"));
-                movie.setOriginalLanguage(jsonMovie.getString("original_language"));
-                movie.setOriginalTitle(jsonMovie.getString("original_title"));
-                movie.setReleaseDate(jsonMovie.getString("release_date"));
-                movie.setThumnail(jsonMovie.getString("poster_path"));
-                movie.setPopularity(jsonMovie.getString("popularity"));
-                movie.setVideo(jsonMovie.getString("video"));
-                movie.setVoteAverage(jsonMovie.getString("vote_average"));
-                movie.setVoteCount(jsonMovie.getString("vote_count"));
+                movie.setAdult(jsonMovie.getString(Constant.PARAM_ADULT));
+                movie.setDescription(jsonMovie.getString(Constant.PARAM_OVERVIEW));
+                movie.setGenreIds(jsonMovie.getString(Constant.PARAM_GENRES_IDS));
+                movie.setTitle(jsonMovie.getString(Constant.PARAM_TITLE));
+                movie.setId(jsonMovie.getString(Constant.PARAM_ID));
+                movie.setImageDetail(jsonMovie.getString(Constant.PARAM_BACKDROP));
+                movie.setOriginalLanguage(jsonMovie.getString(Constant.PARAM_ORI_LANGUAGE));
+                movie.setOriginalTitle(jsonMovie.getString(Constant.PARAM_ORI_TITLE));
+                movie.setReleaseDate(jsonMovie.getString(Constant.PARAM_RE_DATE));
+                movie.setThumnail(jsonMovie.getString(Constant.PARAM_POSTER));
+                movie.setPopularity(jsonMovie.getString(Constant.PARAM_POPULARITY));
+                movie.setVideo(jsonMovie.getString(Constant.PARAM_VIDEO));
+                movie.setVoteAverage(jsonMovie.getString(Constant.PARAM_VOTE_AVERAGE));
+                movie.setVoteCount(jsonMovie.getString(Constant.PARAM_VOTE_COUNT));
 
                 mMovies.add(movie);
             }
@@ -160,11 +170,11 @@ public class MainFragment extends Fragment implements VolleyListeners {
         mAdapter.updateResults(mMovies,getActivity());
     }
 
-    private void loadMoreData(int current_page) {
+    private void loadMoreData(int current_page) throws UnsupportedEncodingException {
 
         current_page++;
 
-        VolleyRequest.requestJson(this, Constant.URL_JSON_MOVIE_LIST_POPULARITY + Constant.NEW_PAGE + current_page);
+        VolleyRequest.requestJson(this, URLUtils.getURLPopularity(current_page));
 
         mAdapter.notifyDataSetChanged();
 

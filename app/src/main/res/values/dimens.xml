@@ -11,5 +11,6 @@
 
     <!--Text size on Detail screen-->
     <dimen name="title_detail">14sp</dimen>
+    <dimen name="title_synopsis">14sp</dimen>
     <dimen name="text_description">10sp</dimen>
 </resources>
