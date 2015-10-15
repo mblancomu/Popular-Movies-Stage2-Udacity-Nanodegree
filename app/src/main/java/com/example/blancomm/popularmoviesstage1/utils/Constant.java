@@ -6,6 +6,9 @@ public class Constant {
     public static final String URL_DETAIL_IMAGE = "https://image.tmdb.org/t/p/w500/";
     public static final String URL_THUMNAIL_IMAGE = "https://image.tmdb.org/t/p/";
     public static final String URL_YOUTUBE = "https://www.youtube.com/watch?v=";
+    public static final String URL_IMDB = "http://www.imdb.com/title/";
+
+    public static final String FINAL_URL_IMDB = "/?ref_=inth_ov_tt";
 
     //Constants for several TAGs
     public static final String TAG_JSON = "tag_json";
@@ -19,21 +22,25 @@ public class Constant {
 
    //URL for crequest services
     public static final String SCHEME_URL = "http";
+    public static final String SCHEME_URLS = "https";
     public static final String AUTHORITY_URL = "api.themoviedb.org";
+    public static final String AUTHORITY_URL_YOUTUBE = "www.youtube.com";
 
     //Path for create UrlBuilder
     public static final String PATH_3 = "3";
     public static final String PATH_DISCOVER = "discover";
     public static final String PATH_MOVIE = "movie";
     public static final String PATH_VIDEOS = "videos";
+    public static final String PATH_WATCH = "watch";
 
     //QUERIES for the url builder
     public static final String QUERY_PARAM_SORT = "sort_by";
     public static final String QUERY_PARAM_API_KEY = "api_key";
     public static final String QUERY_PARAM_PAGE = "page";
+    public static final String QUERY_PARAM_V = "v";
 
     //Param API KEY. Is a personal value.
-    public static final String PARAM_API_KEY = "*********************";
+    public static final String PARAM_API_KEY = "***********************";
 
     //Queries values for any param in url and field on JSONObject Detail
     public static final String PARAM_ADULT = "adult";

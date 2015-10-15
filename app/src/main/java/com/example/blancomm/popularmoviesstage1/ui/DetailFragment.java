@@ -3,6 +3,7 @@ package com.example.blancomm.popularmoviesstage1.ui;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -12,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,13 +34,12 @@ import com.example.blancomm.popularmoviesstage1.utils.JSONActions;
 import com.example.blancomm.popularmoviesstage1.utils.URLUtils;
 import com.example.blancomm.popularmoviesstage1.utils.UtilsView;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,6 +62,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private LinearLayout mLinearIcons;
     private CardView mCardGenres;
     private LinearLayout mIconsGenres, mMainView;
+    private List<String> videos;
 
     public DetailFragment() {
     }
@@ -85,9 +85,8 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         try {
 
-            VolleyRequest.requestJson(this, URLUtils.getURLMovieDtail(mIdMovie));
-
-            Log.e(TAG,"Videos: " + URLUtils.getURLMovieVideos(mIdMovie));
+            VolleyRequest.requestJsonMovies(this, URLUtils.getURLMovieDtail(mIdMovie));
+            VolleyRequest.requestJsonVideos(this, URLUtils.getURLMovieVideos(mIdMovie));
 
         } catch (UnsupportedEncodingException e) {
 
@@ -130,6 +129,9 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mIconsGenres = (LinearLayout)view.findViewById(R.id.ll_genres);
         mMainView = (LinearLayout)view.findViewById(R.id.ll_main);
 
+        view.findViewById(R.id.iv_website).setOnClickListener(mLinksClickListener);
+        view.findViewById(R.id.iv_youtube).setOnClickListener(mLinksClickListener);
+        view.findViewById(R.id.iv_imdb).setOnClickListener(mLinksClickListener);
 
         AnimationsUtils.fadeInAlphaIcons(getActivity(), mIconVotes, R.anim.tween_votes);
         AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconPopularity, R.anim.tween_popularity);
@@ -156,8 +158,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int i) {
 
-                Log.e(TAG, "Valor de i: " + i);
-
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
@@ -167,13 +167,13 @@ public class DetailFragment extends Fragment implements VolleyListeners {
                     mCardHeaderCollapse.setCardBackgroundColor(getResources().getColor(R.color.white));
                     layoutParams.setMargins(0, 0, 0, 0);
                     mLinearIcons.setLayoutParams(layoutParams);
-                    mRowAdults.setVisibility(View.VISIBLE);
+                    mRowAdults.setVisibility(movieDetail.getAdult().equals("true") ? View.VISIBLE : View.GONE);
 
                 } else if (i == 0) {
 
                     mScrollView.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
                     mCardHeaderCollapse.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
-                    layoutParams.setMargins(0,55,0,0);
+                    layoutParams.setMargins(0, 55, 0, 0);
                     mLinearIcons.setLayoutParams(layoutParams);
                     mRowAdults.setVisibility(View.GONE);
 
@@ -183,11 +183,22 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     }
 
     @Override
-    public void onFinishJsonRequest(JSONObject jsonObject) {
+    public void onFinishJsonMoviesRequest(JSONObject jsonObject) {
 
         try {
             movieDetail = JSONActions.parseDetail(jsonObject);
             injectData(movieDetail);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onFinishJsonVideosRequest(JSONObject jsonObject) {
+
+        try {
+            videos = JSONActions.getVideos(jsonObject);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -200,7 +211,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mTitle = movieDetailInfo.getTitle();
         collapsingToolbar.setTitle(mTitle);
 
-        mDate.setText(movieDetailInfo.getReleaseDate());
+        mDate.setText((movieDetailInfo.getReleaseDate().split("[ \\-]"))[0]);
         mVotes.setText(movieDetailInfo.getVoteCount());
         mRates.setText(movieDetailInfo.getVoteAverage());
         mPopulrity.setText(movieDetailInfo.getPopularity());
@@ -213,8 +224,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         setSynopsisCard(inflater);
         setRuntimeCard(inflater);
         setCountryCard(inflater);
-        setHomepageCard(inflater);
-        setImdbCard(inflater);
         setVideosCard(inflater);
 
         mFlag.setImageResource(UtilsView.setFlagLanguageDetail(movieDetailInfo.getOriginalLanguage()));
@@ -227,11 +236,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        if (genresSize > 0){
-            mCardGenres.setVisibility(View.VISIBLE);
-        }else {
-            mCardGenres.setVisibility(View.GONE);
-        }
+        mCardGenres.setVisibility(genresSize > 0 ? View.VISIBLE : View.GONE);
 
         for (int i = 0; i < genresSize; i++){
 
@@ -275,11 +280,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         for (int i = 0; i < countriesSize;i++){
 
-            if (countriesSize > 1) {
-                countries.append(", " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString());
-            }
-
-             countries.append(JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString());
+            countries.append(i == countriesSize-1 ? "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() : "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() + " \n");
 
         }
 
@@ -299,25 +300,40 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
-    private void setImdbCard(LayoutInflater inflater){
+    private View.OnClickListener mLinksClickListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            showLink(v);
+        }
+    };
 
-        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
-
-        String urlImdb = "http://www.imdb.com/title/" + movieDetail.getImdb_id() + "/?ref_=inth_ov_tt";
-                ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.imdb));
-        ((TextView)view.findViewById(R.id.tv_description)).setText(urlImdb);
-        mMainView.addView(view);
-
+    public void showLink(View v){
+            switch(v.getId()) {
+                case R.id.iv_website:
+                    launchLink(movieDetail.getHomepage());
+                    break;
+                case R.id.iv_youtube:
+                    try {
+                        launchLink(URLUtils.getURLTrailerYouTube(videos.get(0).toString()));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.iv_imdb:
+                    launchLink(Constant.URL_IMDB + movieDetail.getImdb_id());
+                    break;
+                default:
+                    break;
+            }
     }
 
-    private void setHomepageCard(LayoutInflater inflater){
+    private void launchLink(String url){
 
-        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+        if (!url.startsWith("http://") && !url.startsWith("https://"))
+            url = "http://" + url;
 
-        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.homepage));
-        ((TextView)view.findViewById(R.id.tv_description)).setText(movieDetail.getHomepage());
-        mMainView.addView(view);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(browserIntent);
 
     }
-
 }

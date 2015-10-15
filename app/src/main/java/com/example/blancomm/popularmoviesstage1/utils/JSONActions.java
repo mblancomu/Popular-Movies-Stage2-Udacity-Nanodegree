@@ -102,4 +102,19 @@ public class JSONActions {
         return genres;
 
     }
+
+    public static List<String> getVideos(JSONObject json) throws JSONException {
+
+        JSONArray jsonVideos = json.getJSONArray("results");
+        int videosSize = jsonVideos.length();
+
+        List<String> videos = new ArrayList<>();
+
+        for (int ii = 0; ii < videosSize; ii++) {
+            videos.add(jsonVideos.getJSONObject(ii).getString("key"));
+        }
+
+        return videos;
+
+    }
 }

@@ -1,16 +1,13 @@
 package com.example.blancomm.popularmoviesstage1.ui;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 
 import com.example.blancomm.popularmoviesstage1.R;
 import com.example.blancomm.popularmoviesstage1.VolleyListeners;
@@ -62,7 +59,7 @@ public class MainFragment extends Fragment implements VolleyListeners {
         Log.e(TAG,"Position : " + mPosition);
 
         try {
-            VolleyRequest.requestJson(this, setURLFromPosition(mPosition));
+            VolleyRequest.requestJsonMovies(this, setURLFromPosition(mPosition));
 
             Log.e(TAG, "Url: " + setURLFromPosition(mPosition));
         } catch (UnsupportedEncodingException e) {
@@ -135,7 +132,7 @@ public class MainFragment extends Fragment implements VolleyListeners {
     }
 
     @Override
-    public void onFinishJsonRequest(JSONObject jsonObject) {
+    public void onFinishJsonMoviesRequest(JSONObject jsonObject) {
 
         try {
 
@@ -170,11 +167,16 @@ public class MainFragment extends Fragment implements VolleyListeners {
         mAdapter.updateResults(mMovies,getActivity());
     }
 
+    @Override
+    public void onFinishJsonVideosRequest(JSONObject jsonObject) {
+
+    }
+
     private void loadMoreData(int current_page) throws UnsupportedEncodingException {
 
         current_page++;
 
-        VolleyRequest.requestJson(this, URLUtils.getURLPopularity(current_page));
+        VolleyRequest.requestJsonMovies(this, URLUtils.getURLPopularity(current_page));
 
         mAdapter.notifyDataSetChanged();
 

@@ -26,7 +26,7 @@ public class VolleyRequest {
     }
 
 
-    public static void requestJson(final VolleyListeners listeners, String url) {
+    public static void requestJsonMovies(final VolleyListeners listeners, String url) {
 
         final JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
@@ -35,7 +35,32 @@ public class VolleyRequest {
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "Response: " + response.toString());
 
-                        listeners.onFinishJsonRequest(response);
+                        listeners.onFinishJsonMoviesRequest(response);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+
+        // Request queue on Application class manager.
+        AppController.getInstance().addToRequestQueue(jsObjRequest, Constant.TAG_JSON);
+
+    }
+
+    public static void requestJsonVideos(final VolleyListeners listeners, String url) {
+
+        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "Response: " + response.toString());
+
+                        listeners.onFinishJsonVideosRequest(response);
                     }
                 }, new Response.ErrorListener() {
 

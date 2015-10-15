@@ -81,16 +81,13 @@ public class URLUtils {
         return builder.build().toString();
     }
 
-    public static String getURLTrailerYouTube(String idMovie) throws UnsupportedEncodingException {
+    public static String getURLTrailerYouTube(String keyMovie) throws UnsupportedEncodingException {
 
         Uri.Builder builder = new Uri.Builder();
-        builder.scheme(Constant.SCHEME_URL)
-                .authority(Constant.AUTHORITY_URL)
-                .appendPath(Constant.PATH_3)
-                .appendPath(Constant.PATH_MOVIE)
-                .appendPath(idMovie)
-                .appendPath(Constant.PATH_VIDEOS)
-                .appendQueryParameter(Constant.QUERY_PARAM_API_KEY, Constant.PARAM_API_KEY);
+        builder.scheme(Constant.SCHEME_URLS)
+                .authority(Constant.AUTHORITY_URL_YOUTUBE)
+                .appendPath(Constant.PATH_WATCH)
+                .appendQueryParameter(Constant.QUERY_PARAM_V, keyMovie);
 
         return builder.build().toString();
     }
