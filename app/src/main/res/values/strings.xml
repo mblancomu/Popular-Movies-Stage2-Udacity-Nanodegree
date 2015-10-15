@@ -18,7 +18,7 @@
     <!--Transitions effects-->
     <string name="transition_grid_to_detail">DetailFragment</string>
 
-    <string name="width_image_thumb">w185/</string>
+    <string name="width_image_thumb">w154/</string>
 
     <!--Titles cards on detail fragmen-->
     <string name="synopsis">Synopsis</string>
@@ -27,5 +27,6 @@
     <string name="videos">Trailers</string>
     <string name="homepage">Homepage</string>
     <string name="imdb">ImDb</string>
+    <string name="links">Links</string>
 
 </resources>

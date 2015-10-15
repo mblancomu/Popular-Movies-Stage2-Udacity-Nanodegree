@@ -56,18 +56,22 @@ public class MainFragment extends Fragment implements VolleyListeners {
 
         mPosition =  getArguments().getInt(TAB_POSITION);
 
-        Log.e(TAG,"Position : " + mPosition);
-
         try {
+
             VolleyRequest.requestJsonMovies(this, setURLFromPosition(mPosition));
 
-            Log.e(TAG, "Url: " + setURLFromPosition(mPosition));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
     }
 
+    /**
+     * Depending of the tab, the url composite is different.
+     * @param position
+     * @return
+     * @throws UnsupportedEncodingException
+     */
     private String setURLFromPosition(int position) throws UnsupportedEncodingException {
 
         String url = "";
@@ -131,6 +135,10 @@ public class MainFragment extends Fragment implements VolleyListeners {
 
     }
 
+    /**
+     * Get data form the request on volleyrequest for all movies.
+     * @param jsonObject
+     */
     @Override
     public void onFinishJsonMoviesRequest(JSONObject jsonObject) {
 
@@ -167,11 +175,20 @@ public class MainFragment extends Fragment implements VolleyListeners {
         mAdapter.updateResults(mMovies,getActivity());
     }
 
+    /**
+     * Interface. Dont used here, only in detail view.
+     * @param jsonObject
+     */
     @Override
     public void onFinishJsonVideosRequest(JSONObject jsonObject) {
 
     }
 
+    /**
+     * Update the grid view with differents pages when the user do scroll.
+     * @param current_page
+     * @throws UnsupportedEncodingException
+     */
     private void loadMoreData(int current_page) throws UnsupportedEncodingException {
 
         current_page++;

@@ -20,7 +20,7 @@ public class Constant {
     //Fragments tags for id the fragment;
     public static final String TAG_DETAIL_FRAGMENT = "fragment_detail";
 
-   //URL for crequest services
+    //URL for crequest services
     public static final String SCHEME_URL = "http";
     public static final String SCHEME_URLS = "https";
     public static final String AUTHORITY_URL = "api.themoviedb.org";
@@ -40,7 +40,7 @@ public class Constant {
     public static final String QUERY_PARAM_V = "v";
 
     //Param API KEY. Is a personal value.
-    public static final String PARAM_API_KEY = "***********************";
+    public static final String PARAM_API_KEY = "**********************";
 
     //Queries values for any param in url and field on JSONObject Detail
     public static final String PARAM_ADULT = "adult";

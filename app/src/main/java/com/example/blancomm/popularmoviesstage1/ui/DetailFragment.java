@@ -107,6 +107,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         return rootView;
     }
 
+    /**
+     * TODO: This should change in the future, i have very much objects here. Instantiate all objects in view.
+     * @param view
+     */
     private void instantiateObjects(View view) {
 
         mImageDetail = (NetworkImageView) view.findViewById(R.id.image_detail);
@@ -153,6 +157,9 @@ public class DetailFragment extends Fragment implements VolleyListeners {
             }
         });
 
+        /**
+         * catch the listeners from AppBarLayout. When is collapse and expanded, do differents actions.
+         */
         mAppBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
             @Override
@@ -163,7 +170,8 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
                 if (i >= -418 && i < 0) {
 
-                    mScrollView.animate().translationY(60).setInterpolator(new DecelerateInterpolator(2));
+                    //Collapse
+                    mScrollView.animate().translationY(getResources().getInteger(R.integer.translation_card_header)).setInterpolator(new DecelerateInterpolator(2));
                     mCardHeaderCollapse.setCardBackgroundColor(getResources().getColor(R.color.white));
                     layoutParams.setMargins(0, 0, 0, 0);
                     mLinearIcons.setLayoutParams(layoutParams);
@@ -171,9 +179,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
                 } else if (i == 0) {
 
+                    //Expanded
                     mScrollView.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
                     mCardHeaderCollapse.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
-                    layoutParams.setMargins(0, 55, 0, 0);
+                    layoutParams.setMargins(0, getResources().getInteger(R.integer.margin_top_card_header), 0, 0);
                     mLinearIcons.setLayoutParams(layoutParams);
                     mRowAdults.setVisibility(View.GONE);
 
@@ -182,6 +191,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         });
     }
 
+    /**
+     * Get the data from json movie request on volleyrequest class.
+     * @param jsonObject
+     */
     @Override
     public void onFinishJsonMoviesRequest(JSONObject jsonObject) {
 
@@ -193,6 +206,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
     }
 
+    /**
+     * Get data from json videos for a movie id, request on volleyrequest class.
+     * @param jsonObject
+     */
     @Override
     public void onFinishJsonVideosRequest(JSONObject jsonObject) {
 
@@ -204,10 +221,16 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
     }
 
+    /**
+     * Inject data in the instantiate objects in the view.
+     * @param movieDetailInfo
+     * @throws JSONException
+     */
     private void injectData(MovieDetailInfo movieDetailInfo) throws JSONException {
 
         VolleyRequest.requestImage(Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail(), mImageDetail);
-        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + getActivity().getString(R.string.width_image_thumb_detail) + movieDetailInfo.getThumnail(), mThumbnail);
+        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + getActivity().getString(R.string.width_image_thumb) + movieDetailInfo.getThumnail(), mThumbnail);
+
         mTitle = movieDetailInfo.getTitle();
         collapsingToolbar.setTitle(mTitle);
 
@@ -221,6 +244,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        //Subviews with differents cards.
         setSynopsisCard(inflater);
         setRuntimeCard(inflater);
         setCountryCard(inflater);
@@ -230,6 +254,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
+    /**
+     * Put icons for genres ids. This insert dinamically a view with imageview and textview.
+     * @param genres
+     */
     private void putIconsGenres(List<String> genres){
 
         int genresSize = genres.size();
@@ -254,6 +282,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
+    /**
+     * Card view for the synopsis of the moview.
+     * @param inflater
+     */
     private void setSynopsisCard(LayoutInflater inflater){
 
         View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
@@ -263,6 +295,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mMainView.addView(view);
     }
 
+    /**
+     * Card view for the runtime of movie.
+     * @param inflater
+     */
     private void setRuntimeCard(LayoutInflater inflater){
 
         View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
@@ -272,6 +308,11 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mMainView.addView(view);
     }
 
+    /**
+     * Card view for the countries production. Get an array with all countries and insert the text.
+     * @param inflater
+     * @throws JSONException
+     */
     private void setCountryCard(LayoutInflater inflater) throws JSONException {
 
         View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
@@ -280,7 +321,8 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         for (int i = 0; i < countriesSize;i++){
 
-            countries.append(i == countriesSize-1 ? "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() : "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() + " \n");
+            countries.append(i == countriesSize-1 ? "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() :
+                    "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() + " \n");
 
         }
 
@@ -290,6 +332,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
+    /**
+     * TODO: Sure, i put here the trailers, now non implementing. Card view for the videos of this movie. This contain the trailers.
+     * @param inflater
+     */
     private void setVideosCard(LayoutInflater inflater){
 
         View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
@@ -300,12 +346,19 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
+    /**
+     * Common click listeners for the links buttons.
+     */
     private View.OnClickListener mLinksClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             showLink(v);
         }
     };
 
+    /**
+     * Show a link in function the selected view.
+     * @param v
+     */
     public void showLink(View v){
             switch(v.getId()) {
                 case R.id.iv_website:
@@ -326,6 +379,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
             }
     }
 
+    /**
+     * Intent for launch a url on navigatore.
+     * @param url
+     */
     private void launchLink(String url){
 
         if (!url.startsWith("http://") && !url.startsWith("https://"))

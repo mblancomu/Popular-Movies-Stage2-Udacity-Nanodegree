@@ -7,13 +7,13 @@
 
     <!--Text size on Thumbnail grid-->
     <dimen name="title_thumbnail">9sp</dimen>
-    <dimen name="votes_thumbnail">5sp</dimen>
+    <dimen name="votes_thumbnail">6sp</dimen>
 
     <!--Text size on Detail screen-->
     <dimen name="title_detail">14sp</dimen>
     <dimen name="title_synopsis">14sp</dimen>
     <dimen name="text_description">10sp</dimen>
 
-    <dimen name="margin_top_card_header">-30dp</dimen>
+    <dimen name="margin_top_card_header">-25dp</dimen>
     <dimen name="margin_icons_genres">6dp</dimen>
 </resources>

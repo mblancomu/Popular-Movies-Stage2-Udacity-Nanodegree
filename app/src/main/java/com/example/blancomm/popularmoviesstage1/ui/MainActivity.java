@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Instantiate objects in view.
+     */
     private void initObjectsView(){
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

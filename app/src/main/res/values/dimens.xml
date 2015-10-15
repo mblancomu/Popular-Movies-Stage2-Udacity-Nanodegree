@@ -13,4 +13,12 @@
     <dimen name="title_detail">14sp</dimen>
     <dimen name="title_synopsis">14sp</dimen>
     <dimen name="text_description">10sp</dimen>
+
+    <dimen name="margin_top_card_header">-35dp</dimen>
+    <dimen name="margin_icons_genres">6dp</dimen>
+
+    <dimen name="app_layoutbar_height">250dp</dimen>
+    <dimen name="margin_gral_cards">2dp</dimen>
+    <dimen name="margin_fab">8dp</dimen>
+    <dimen name="size_icon_flag_grid">16dp</dimen>
 </resources>

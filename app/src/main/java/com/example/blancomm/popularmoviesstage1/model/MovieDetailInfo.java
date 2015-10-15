@@ -16,7 +16,6 @@ public class MovieDetailInfo {
     private String video;
     private String voteAverage;
     private String voteCount;
-
     private String homepage;
     private String imdb_id;
     private String production_companies;
