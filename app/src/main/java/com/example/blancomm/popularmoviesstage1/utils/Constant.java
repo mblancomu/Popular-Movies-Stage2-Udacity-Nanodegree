@@ -8,8 +8,6 @@ public class Constant {
     public static final String URL_YOUTUBE = "https://www.youtube.com/watch?v=";
     public static final String URL_IMDB = "http://www.imdb.com/title/";
 
-    public static final String FINAL_URL_IMDB = "/?ref_=inth_ov_tt";
-
     //Constants for several TAGs
     public static final String TAG_JSON = "tag_json";
     public static final String TAG_IMAGE = "tag_image";
@@ -31,6 +29,7 @@ public class Constant {
     public static final String PATH_DISCOVER = "discover";
     public static final String PATH_MOVIE = "movie";
     public static final String PATH_VIDEOS = "videos";
+    public static final String PATH_REVIEWS = "reviews";
     public static final String PATH_WATCH = "watch";
 
     //QUERIES for the url builder
@@ -40,7 +39,7 @@ public class Constant {
     public static final String QUERY_PARAM_V = "v";
 
     //Param API KEY. Is a personal value.
-    public static final String PARAM_API_KEY = "**********************";
+    public static final String PARAM_API_KEY = "24a07050c1c434bbbe6999638acbef22";
 
     //Queries values for any param in url and field on JSONObject Detail
     public static final String PARAM_ADULT = "adult";

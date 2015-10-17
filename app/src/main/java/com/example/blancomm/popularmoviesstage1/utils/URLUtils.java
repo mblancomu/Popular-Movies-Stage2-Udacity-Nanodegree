@@ -67,6 +67,20 @@ public class URLUtils {
         return builder.build().toString();
     }
 
+    public static String getURLMovieReviews(String idMovie) throws UnsupportedEncodingException {
+
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme(Constant.SCHEME_URL)
+                .authority(Constant.AUTHORITY_URL)
+                .appendPath(Constant.PATH_3)
+                .appendPath(Constant.PATH_MOVIE)
+                .appendPath(idMovie)
+                .appendPath(Constant.PATH_REVIEWS)
+                .appendQueryParameter(Constant.QUERY_PARAM_API_KEY, Constant.PARAM_API_KEY);
+
+        return builder.build().toString();
+    }
+
     public static String getURLMovieVideos(String idMovie) throws UnsupportedEncodingException {
 
         Uri.Builder builder = new Uri.Builder();

@@ -38,7 +38,6 @@ public class VolleyRequest {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "Response: " + response.toString());
 
                         listeners.onFinishJsonMoviesRequest(response);
                     }
@@ -68,9 +67,38 @@ public class VolleyRequest {
 
                     @Override
                     public void onResponse(JSONObject response) {
-                        Log.d(TAG, "Response: " + response.toString());
 
                         listeners.onFinishJsonVideosRequest(response);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+
+        // Request queue on Application class manager.
+        AppController.getInstance().addToRequestQueue(jsObjRequest, Constant.TAG_JSON);
+
+    }
+
+    /**
+     * Request for get only the json from reviews. Need the id of movie for get all reviews.
+     * @param listeners
+     * @param url
+     */
+    public static void requestJsonReviews(final VolleyListeners listeners, String url) {
+
+        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "Reviews : " + response.toString());
+
+                        listeners.onFinishJsonReviewsRequest(response);
                     }
                 }, new Response.ErrorListener() {
 

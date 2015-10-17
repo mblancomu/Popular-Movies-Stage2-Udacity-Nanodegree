@@ -3,6 +3,7 @@ package com.example.blancomm.popularmoviesstage1.utils;
 
 import com.example.blancomm.popularmoviesstage1.model.MovieDetailInfo;
 import com.example.blancomm.popularmoviesstage1.model.MoviesInfo;
+import com.example.blancomm.popularmoviesstage1.model.ReviewsInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -115,6 +116,30 @@ public class JSONActions {
         }
 
         return videos;
+
+    }
+
+    public static List<ReviewsInfo> getReviews(JSONObject json) throws JSONException {
+
+        JSONArray jsonReviews = json.getJSONArray("results");
+        int reviewsSize = jsonReviews.length();
+
+        List<ReviewsInfo> reviews = new ArrayList<>();
+
+        for (int i = 0; i < reviewsSize; i++) {
+
+            JSONObject jsonReview = jsonReviews.getJSONObject(i);
+
+            ReviewsInfo review = new ReviewsInfo();
+            review.setId(jsonReview.getString("id"));
+            review.setAuthor(jsonReview.getString("author"));
+            review.setContent(jsonReview.getString("content"));
+            review.setUrl(jsonReview.getString("url"));
+            reviews.add(review);
+
+        }
+
+        return reviews;
 
     }
 }

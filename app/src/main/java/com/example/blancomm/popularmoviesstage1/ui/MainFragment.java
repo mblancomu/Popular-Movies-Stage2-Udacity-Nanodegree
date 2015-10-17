@@ -184,6 +184,11 @@ public class MainFragment extends Fragment implements VolleyListeners {
 
     }
 
+    @Override
+    public void onFinishJsonReviewsRequest(JSONObject jsonObject) {
+
+    }
+
     /**
      * Update the grid view with differents pages when the user do scroll.
      * @param current_page

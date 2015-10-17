@@ -9,4 +9,5 @@ public interface VolleyListeners {
 
     void onFinishJsonMoviesRequest(JSONObject jsonObject);
     void onFinishJsonVideosRequest(JSONObject jsonObject);
+    void onFinishJsonReviewsRequest(JSONObject jsonObject);
 }

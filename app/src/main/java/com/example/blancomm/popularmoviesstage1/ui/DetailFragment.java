@@ -27,6 +27,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.example.blancomm.popularmoviesstage1.R;
 import com.example.blancomm.popularmoviesstage1.VolleyListeners;
 import com.example.blancomm.popularmoviesstage1.model.MovieDetailInfo;
+import com.example.blancomm.popularmoviesstage1.model.ReviewsInfo;
 import com.example.blancomm.popularmoviesstage1.network.VolleyRequest;
 import com.example.blancomm.popularmoviesstage1.utils.AnimationsUtils;
 import com.example.blancomm.popularmoviesstage1.utils.Constant;
@@ -63,6 +64,8 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private CardView mCardGenres;
     private LinearLayout mIconsGenres, mMainView;
     private List<String> videos;
+    private List<ReviewsInfo> reviews;
+    private LayoutInflater inflater;
 
     public DetailFragment() {
     }
@@ -87,6 +90,9 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
             VolleyRequest.requestJsonMovies(this, URLUtils.getURLMovieDtail(mIdMovie));
             VolleyRequest.requestJsonVideos(this, URLUtils.getURLMovieVideos(mIdMovie));
+            VolleyRequest.requestJsonReviews(this, URLUtils.getURLMovieReviews(mIdMovie));
+
+            Log.e(TAG, URLUtils.getURLMovieReviews(mIdMovie));
 
         } catch (UnsupportedEncodingException e) {
 
@@ -132,6 +138,9 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mCardGenres = (CardView)view.findViewById(R.id.card_genres);
         mIconsGenres = (LinearLayout)view.findViewById(R.id.ll_genres);
         mMainView = (LinearLayout)view.findViewById(R.id.ll_main);
+
+
+        inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         view.findViewById(R.id.iv_website).setOnClickListener(mLinksClickListener);
         view.findViewById(R.id.iv_youtube).setOnClickListener(mLinksClickListener);
@@ -221,6 +230,20 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
     }
 
+    @Override
+    public void onFinishJsonReviewsRequest(JSONObject jsonObject) {
+
+        try {
+            reviews = JSONActions.getReviews(jsonObject);
+            setReviewsCard(inflater);
+
+            setVideosCard(inflater);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Inject data in the instantiate objects in the view.
      * @param movieDetailInfo
@@ -242,13 +265,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         collapsingToolbar.setExpandedTitleTextAppearance(R.style.ExpandedAppBar);
         collapsingToolbar.setCollapsedTitleTextAppearance(R.style.CollapsedAppBar);
 
-        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         //Subviews with differents cards.
         setSynopsisCard(inflater);
         setRuntimeCard(inflater);
         setCountryCard(inflater);
-        setVideosCard(inflater);
 
         mFlag.setImageResource(UtilsView.setFlagLanguageDetail(movieDetailInfo.getOriginalLanguage()));
 
@@ -277,6 +297,23 @@ public class DetailFragment extends Fragment implements VolleyListeners {
             lp.setMargins(15, 15, 15, 15);
             view.setLayoutParams(lp);
             mIconsGenres.addView(view);
+
+        }
+
+    }
+
+    private void putReviews(List<ReviewsInfo> reviews, LinearLayout viewReview){
+
+        int genresSize = reviews.size();
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        for (int i = 0; i < genresSize; i++){
+
+            View view = inflater.inflate(R.layout.item_review, mIconsGenres, false);
+
+            ((TextView)view.findViewById(R.id.tv_author)).setText(reviews.get(i).getAuthor());
+            ((TextView)view.findViewById(R.id.tv_comment)).setText(reviews.get(i).getContent());
+            viewReview.addView(view);
 
         }
 
@@ -341,7 +378,20 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
 
         ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.videos));
-        ((TextView)view.findViewById(R.id.tv_description)).setText(movieDetail.getProduction_countries());
+        //((TextView)view.findViewById(R.id.tv_description)).setText(reviews != null ? reviews.get(0).toString() : "No reviews");
+        mMainView.addView(view);
+
+    }
+
+    private void setReviewsCard(LayoutInflater inflater){
+
+        View view = inflater.inflate(R.layout.card_detail_reviews, mMainView, false);
+
+        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.reviews));
+        int sizeReview = reviews.size();
+        Log.e(TAG,"tamaño: " + sizeReview);
+        view.findViewById(R.id.tv_empty).setVisibility(sizeReview > 0 ? View.GONE : View.VISIBLE);
+        putReviews(reviews, ((LinearLayout)view.findViewById(R.id.ll_reviews)));
         mMainView.addView(view);
 
     }

@@ -28,5 +28,9 @@
     <string name="homepage">Homepage</string>
     <string name="imdb">ImDb</string>
     <string name="links">Links</string>
+    <string name="reviews">Reviews</string>
+
+    <!--Text for empty reviews-->
+    <string name="empty_reviews">No reviews for this movie.</string>
 
 </resources>
