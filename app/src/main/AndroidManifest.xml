@@ -23,7 +23,7 @@
         <activity
             android:name=".ui.DetailActivity"
             android:label="@string/title_activity_detail"
-            android:parentActivityName=".ui.MainActivity" >
+            android:parentActivityName=".ui.DetailActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.blancomm.popularmoviesstage1.ui.MainActivity" />

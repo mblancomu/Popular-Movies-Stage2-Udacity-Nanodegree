@@ -1,0 +1,19 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+
+    <!--Text size on Thumbnail grid-->
+    <dimen name="title_thumbnail">9sp</dimen>
+    <dimen name="votes_thumbnail">6sp</dimen>
+
+    <!--Text size on Detail screen-->
+    <dimen name="title_detail">14sp</dimen>
+    <dimen name="title_synopsis">14sp</dimen>
+    <dimen name="text_description">10sp</dimen>
+
+    <dimen name="margin_top_card_header">-25dp</dimen>
+    <dimen name="margin_icons_genres">6dp</dimen>
+</resources>

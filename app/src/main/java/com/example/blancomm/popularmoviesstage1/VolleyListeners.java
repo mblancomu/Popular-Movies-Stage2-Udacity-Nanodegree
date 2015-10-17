@@ -7,6 +7,6 @@ import org.json.JSONObject;
 
 public interface VolleyListeners {
 
-    void onFinishJsonRequest(JSONObject jsonObject);
-    //void onFinishImageRequest(Bitmap bitmap);
+    void onFinishJsonMoviesRequest(JSONObject jsonObject);
+    void onFinishJsonVideosRequest(JSONObject jsonObject);
 }

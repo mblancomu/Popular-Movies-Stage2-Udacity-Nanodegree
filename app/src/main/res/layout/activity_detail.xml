@@ -1,5 +1,10 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/fragment"
-    android:name="com.example.blancomm.popularmoviesstage1.ui.DetailActivityFragment"
-    tools:layout="@layout/fragment_detail" android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:fitsSystemWindows="true"
+    tools:context="com.example.blancomm.dailyselfie.ui.DetailActivity">
+
+    <include layout="@layout/content_detail" />
+
+</android.support.design.widget.CoordinatorLayout>

@@ -5,4 +5,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorBackground">#C5CAE9</color>
     <color name="transparent">#AAffffff</color>
+    <color name="colorBackgroundCardViewHightest">#B2EBF2</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="black_trans">#BB000000</color>
 </resources>

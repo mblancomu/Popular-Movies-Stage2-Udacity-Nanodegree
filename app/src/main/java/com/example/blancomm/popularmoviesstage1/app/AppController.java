@@ -8,6 +8,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.example.blancomm.popularmoviesstage1.utils.LruBitmapCache;
+import com.example.blancomm.popularmoviesstage1.utils.TypefaceUtil;
 
 public class AppController extends Application {
 
@@ -23,6 +24,7 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        TypefaceUtil.overrideFont(getApplicationContext(), "NORMAL", "fonts/Roboto-Regular.ttf"); // font from assets: "assets/fonts/Roboto-Regular.ttf
     }
 
     public static synchronized AppController getInstance() {

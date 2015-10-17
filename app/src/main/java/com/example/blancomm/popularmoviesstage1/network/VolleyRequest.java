@@ -26,14 +26,21 @@ public class VolleyRequest {
     }
 
 
-    public static void requestJson(VolleyListeners listeners, String url) {
+    /**
+     * Request for get all movies from the service.
+     * @param listeners
+     * @param url
+     */
+    public static void requestJsonMovies(final VolleyListeners listeners, String url) {
 
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "Response: " + response.toString());
+
+                        listeners.onFinishJsonMoviesRequest(response);
                     }
                 }, new Response.ErrorListener() {
 
@@ -49,6 +56,41 @@ public class VolleyRequest {
 
     }
 
+    /**
+     * Request for get only the json from videos. Need the id of movie for get all trailers.
+     * @param listeners
+     * @param url
+     */
+    public static void requestJsonVideos(final VolleyListeners listeners, String url) {
+
+        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "Response: " + response.toString());
+
+                        listeners.onFinishJsonVideosRequest(response);
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+
+                    }
+                });
+
+        // Request queue on Application class manager.
+        AppController.getInstance().addToRequestQueue(jsObjRequest, Constant.TAG_JSON);
+
+    }
+
+    /**
+     * Request for get the images for any movie, thumbnail and detail.
+     * @param url
+     * @param networkImageView
+     */
     public static void requestImage(String url, NetworkImageView networkImageView) {
 
         ImageLoader imageLoader = AppController.getInstance().getImageLoader();
@@ -56,30 +98,8 @@ public class VolleyRequest {
         // If you are using NetworkImageView
         networkImageView.setImageUrl(url, imageLoader);
 
-
-        // If you are using normal ImageView
-        /*imageLoader.get(Const.URL_IMAGE, new ImageListener() {
-
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				Log.e(TAG, "Image Load Error: " + error.getMessage());
-			}
-
-			@Override
-			public void onResponse(ImageContainer response, boolean arg1) {
-				if (response.getBitmap() != null) {
-					// load image into imageview
-					imageView.setImageBitmap(response.getBitmap());
-				}
-			}
-		});*/
-
-        // Loading image with placeholder and error image
-        /*imageLoader.get(Constant.URL_IMAGE_MOVIE_DB, ImageLoader.getImageListener(
-                networkImageView, R.drawable.ico_loading, R.drawable.ico_error));*/
-
         Cache cache = AppController.getInstance().getRequestQueue().getCache();
-        Cache.Entry entry = cache.get(Constant.URL_IMAGE_MOVIE_DB);
+        Cache.Entry entry = cache.get(Constant.URL_DETAIL_IMAGE);
         if (entry != null) {
             try {
                 String data = new String(entry.data, "UTF-8");
