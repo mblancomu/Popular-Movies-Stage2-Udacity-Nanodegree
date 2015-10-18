@@ -70,4 +70,8 @@ public class Constant {
     //Param for order the results on the request
     public static final String PARAM_DESC = ".desc";
 
+    //DataBase constants
+    public static final String DATABASE_NAME = "movies.db";
+    public static final int DATABASE_VERSION = 1;
+
 }

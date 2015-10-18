@@ -28,6 +28,7 @@ import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.VolleyListeners;
 import com.example.blancomm.popularmoviesstage2.model.MovieDetailInfo;
 import com.example.blancomm.popularmoviesstage2.model.ReviewsInfo;
+import com.example.blancomm.popularmoviesstage2.model.VideosInfo;
 import com.example.blancomm.popularmoviesstage2.network.VolleyRequest;
 import com.example.blancomm.popularmoviesstage2.utils.AnimationsUtils;
 import com.example.blancomm.popularmoviesstage2.utils.Constant;
@@ -61,7 +62,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private LinearLayout mLinearIcons;
     private CardView mCardGenres;
     private LinearLayout mIconsGenres, mMainView;
-    private List<String> videos;
+    private List<VideosInfo> videos;
     private List<ReviewsInfo> reviews;
     private LayoutInflater inflater;
 
@@ -91,6 +92,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
             VolleyRequest.requestJsonReviews(this, URLUtils.getURLMovieReviews(mIdMovie));
 
             Log.e(TAG, URLUtils.getURLMovieReviews(mIdMovie));
+            Log.e(TAG, URLUtils.getURLMovieVideos(mIdMovie));
 
         } catch (UnsupportedEncodingException e) {
 
@@ -141,7 +143,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         view.findViewById(R.id.iv_website).setOnClickListener(mLinksClickListener);
-        view.findViewById(R.id.iv_youtube).setOnClickListener(mLinksClickListener);
         view.findViewById(R.id.iv_imdb).setOnClickListener(mLinksClickListener);
 
         AnimationsUtils.fadeInAlphaIcons(getActivity(), mIconVotes, R.anim.tween_votes);
@@ -222,6 +223,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         try {
             videos = JSONActions.getVideos(jsonObject);
+            setVideosCard(inflater);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -234,8 +236,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         try {
             reviews = JSONActions.getReviews(jsonObject);
             setReviewsCard(inflater);
-
-            setVideosCard(inflater);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -317,6 +317,35 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
+    private void putVideos(final List<VideosInfo> videos, LinearLayout viewReview){
+
+        int videosSize = videos.size();
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        for (int i = 0; i < videosSize; i++){
+
+            View view = inflater.inflate(R.layout.item_videos, mIconsGenres, false);
+            final String key = videos.get(i).getKey();
+            String hd = videos.get(i).getSize();
+
+            ((TextView)view.findViewById(R.id.tv_trailer)).setText(videos.get(i).getName());
+            ((ImageView)view.findViewById(R.id.iv_video)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    try {
+                        launchLink(URLUtils.getURLTrailerYouTube(key));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            ((ImageView)view.findViewById(R.id.iv_hd)).setVisibility(hd.equals("720") ? View.VISIBLE : View.GONE);
+            viewReview.addView(view);
+
+        }
+
+    }
+
     /**
      * Card view for the synopsis of the moview.
      * @param inflater
@@ -373,10 +402,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
      */
     private void setVideosCard(LayoutInflater inflater){
 
-        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+        View view = inflater.inflate(R.layout.card_detail_trailers, mMainView, false);
 
         ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.videos));
-        //((TextView)view.findViewById(R.id.tv_description)).setText(reviews != null ? reviews.get(0).toString() : "No reviews");
+        putVideos(videos,(LinearLayout)view.findViewById(R.id.ll_trailers));
         mMainView.addView(view);
 
     }
@@ -387,7 +416,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.reviews));
         int sizeReview = reviews.size();
-        Log.e(TAG,"tamaño: " + sizeReview);
         view.findViewById(R.id.tv_empty).setVisibility(sizeReview > 0 ? View.GONE : View.VISIBLE);
         putReviews(reviews, ((LinearLayout)view.findViewById(R.id.ll_reviews)));
         mMainView.addView(view);
@@ -411,13 +439,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
             switch(v.getId()) {
                 case R.id.iv_website:
                     launchLink(movieDetail.getHomepage());
-                    break;
-                case R.id.iv_youtube:
-                    try {
-                        launchLink(URLUtils.getURLTrailerYouTube(videos.get(0).toString()));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
                     break;
                 case R.id.iv_imdb:
                     launchLink(Constant.URL_IMDB + movieDetail.getImdb_id());

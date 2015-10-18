@@ -4,6 +4,7 @@ package com.example.blancomm.popularmoviesstage2.utils;
 import com.example.blancomm.popularmoviesstage2.model.MovieDetailInfo;
 import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage2.model.ReviewsInfo;
+import com.example.blancomm.popularmoviesstage2.model.VideosInfo;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,15 +105,26 @@ public class JSONActions {
 
     }
 
-    public static List<String> getVideos(JSONObject json) throws JSONException {
+    public static List<VideosInfo> getVideos(JSONObject json) throws JSONException {
 
         JSONArray jsonVideos = json.getJSONArray("results");
         int videosSize = jsonVideos.length();
 
-        List<String> videos = new ArrayList<>();
+        List<VideosInfo> videos = new ArrayList<>();
 
-        for (int ii = 0; ii < videosSize; ii++) {
-            videos.add(jsonVideos.getJSONObject(ii).getString("key"));
+        for (int i = 0; i < videosSize; i++) {
+
+            JSONObject jsonVideo = jsonVideos.getJSONObject(i);
+
+            VideosInfo video = new VideosInfo();
+            video.setId(jsonVideo.getString("id"));
+            video.setIso(jsonVideo.getString("iso_639_1"));
+            video.setKey(jsonVideo.getString("key"));
+            video.setName(jsonVideo.getString("name"));
+            video.setSite(jsonVideo.getString("site"));
+            video.setSize(jsonVideo.getString("size"));
+            video.setType(jsonVideo.getString("type"));
+            videos.add(video);
         }
 
         return videos;

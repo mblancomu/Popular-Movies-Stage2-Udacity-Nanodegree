@@ -7,9 +7,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.blancomm.touristictest.Utils.Constant;
-import com.example.blancomm.touristictest.model.POIsDetailInfo;
-import com.example.blancomm.touristictest.model.POIsInfo;
+import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
+import com.example.blancomm.popularmoviesstage2.utils.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,37 +70,15 @@ public class SqlHandler {
     /**
      * Put a new POISInfo object in the table pois.
      *
-     * @param pois
+     * @param moviesInfo
      */
-    public void putPOIs(POIsInfo pois) {
+    public void putFavorites(MoviesInfo moviesInfo) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        Log.e(TAG,pois.getmTitle().toString());
-        values.put(POIsDB.COLUMN_IDPOINT, pois.getmId());
-        values.put(POIsDB.COLUMN_TITLE, pois.getmTitle());
-        values.put(POIsDB.COLUMN_GEOPOINT, pois.getmGeopoint());
-        db.insert(POIsDB.TABLE_POIS, null, values);
-        db.close();
-    }
-
-    /**
-     * Put a POIs Detail object in the table POISDetail.
-     *
-     * @param poIsDetail
-     */
-    public void putPOIsDetail(POIsDetailInfo poIsDetail) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(POIsDetailDB.COLUMN_IDPOINT, poIsDetail.getmId());
-        values.put(POIsDetailDB.COLUMN_TITLE, poIsDetail.getmTitle());
-        values.put(POIsDetailDB.COLUMN_ADDRESS, poIsDetail.getmAddress());
-        values.put(POIsDetailDB.COLUMN_TRANSPORT, poIsDetail.getmTransport());
-        values.put(POIsDetailDB.COLUMN_DESCRIPTION, poIsDetail.getmDescription());
-        values.put(POIsDetailDB.COLUMN_EMAIL, poIsDetail.getmEmail());
-        values.put(POIsDetailDB.COLUMN_PHONE, poIsDetail.getmPhone());
-        values.put(POIsDetailDB.COLUMN_GEOPOINT, poIsDetail.getmGeopoint());
-        db.insert(POIsDetailDB.TABLE_POIS_DETAIL, null, values);
+        Log.e(TAG, moviesInfo.getTitle().toString());
+        values.put(FavoritesDB.COLUMN_IDMOVIE, moviesInfo.getId());
+        db.insert(FavoritesDB.TABLE_FAVORITES, null, values);
         db.close();
     }
 
@@ -110,12 +87,12 @@ public class SqlHandler {
      *
      * @return
      */
-    public static List<POIsInfo> getAllPOIs() {
+    public static List<MoviesInfo> getAllFavorites() {
 
-        List<POIsInfo> pois = null;
+        List<MoviesInfo> movies = null;
         try {
 
-            String selectQuery = "SELECT  * FROM " + POIsDB.TABLE_POIS;
+            String selectQuery = "SELECT  * FROM " + FavoritesDB.TABLE_FAVORITES;
 
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             Cursor cursor = db.rawQuery(selectQuery, null);
@@ -123,12 +100,11 @@ public class SqlHandler {
             if (cursor.moveToFirst()) {
                 do {
 
-                    pois = new ArrayList<>();
-                    POIsInfo poisObject = new POIsInfo();
-                    poisObject.setmId(cursor.getString(0));
-                    poisObject.setmTitle(cursor.getString(1));
-                    poisObject.setmGeopoint(cursor.getString(2));
-                    pois.add(poisObject);
+                    movies = new ArrayList<>();
+                    MoviesInfo moviesInfo = new MoviesInfo();
+                    moviesInfo.setId(cursor.getString(0));
+
+                    movies.add(moviesInfo);
 
                 } while (cursor.moveToNext());
             }
@@ -137,76 +113,32 @@ public class SqlHandler {
         } catch (Exception e) {
             // TODO: handle exception
         }
-        return pois;
-    }
-
-    /**
-     * Get all registers for the table POIsDB.
-     *
-     * @return
-     */
-    public static ArrayList<POIsDetailInfo> getAllPOIsDetails() {
-
-        ArrayList<POIsDetailInfo> pois = null;
-        try {
-
-            String selectQuery = "SELECT  * FROM " + POIsDetailDB.TABLE_POIS_DETAIL;
-
-            SQLiteDatabase db = dbHelper.getWritableDatabase();
-            Cursor cursor = db.rawQuery(selectQuery, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    pois = new ArrayList<>();
-                    POIsDetailInfo poisObject = new POIsDetailInfo();
-
-                    poisObject.setmId(cursor.getString(0));
-                    poisObject.setmTitle(cursor.getString(1));
-                    poisObject.setmAddress(cursor.getString(2));
-                    poisObject.setmTransport(cursor.getString(3));
-                    poisObject.setmDescription(cursor.getString(4));
-                    poisObject.setmEmail(cursor.getString(5));
-                    poisObject.setmPhone(cursor.getString(6));
-                    poisObject.setmGeopoint(cursor.getString(7));
-
-                    pois.add(poisObject);
-
-                } while (cursor.moveToNext());
-            }
-            cursor.close();
-            db.close();
-
-            Log.e(TAG, "Tamaño: " + pois.size());
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-        return pois;
+        return movies;
     }
 
     /*
      * Get the POisDetail info from his id.
      */
-    public static POIsDetailInfo getPOIDetail(String id) {
+    public static MoviesInfo getMovie(String id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        POIsDetailInfo poiDetail = null;
+        MoviesInfo moviesInfo = null;
 
-        Cursor cursor = db.query(POIsDetailDB.TABLE_POIS_DETAIL, new String[]{POIsDetailDB.COLUMN_IDPOINT,
-                        POIsDetailDB.COLUMN_TITLE, POIsDetailDB.COLUMN_ADDRESS, POIsDetailDB.COLUMN_TRANSPORT, POIsDetailDB.COLUMN_DESCRIPTION, POIsDetailDB.COLUMN_EMAIL, POIsDetailDB.COLUMN_PHONE, POIsDetailDB.COLUMN_GEOPOINT}, POIsDetailDB.COLUMN_IDPOINT + "=?",
+        Cursor cursor = db.query(FavoritesDB.TABLE_FAVORITES, new String[]{FavoritesDB.COLUMN_IDMOVIE,
+                }, FavoritesDB.COLUMN_IDMOVIE + "=?",
                 new String[]{String.valueOf(id)}, null, null, null, null);
 
         if (cursor != null) {
 
             cursor.moveToFirst();
 
-            poiDetail = new POIsDetailInfo(cursor.getString(0), cursor.getString(1), cursor.getString(2),
-                    cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7));
+            moviesInfo = new MoviesInfo();
 
         }
 
         cursor.close();
         db.close();
 
-        return poiDetail;
+        return moviesInfo;
     }
 
     /*

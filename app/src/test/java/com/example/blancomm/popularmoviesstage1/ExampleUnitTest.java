@@ -1,4 +1,4 @@
-package com.example.blancomm.popularmoviesstage1;
+package com.example.blancomm.popularmoviesstage2;
 
 import org.junit.Test;
 

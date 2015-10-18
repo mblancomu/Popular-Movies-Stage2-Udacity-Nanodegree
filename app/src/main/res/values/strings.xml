@@ -24,13 +24,14 @@
     <string name="synopsis">Synopsis</string>
     <string name="country">Country</string>
     <string name="runtime">Runtime</string>
-    <string name="videos">Trailers</string>
+    <string name="videos">Videos</string>
     <string name="homepage">Homepage</string>
     <string name="imdb">ImDb</string>
     <string name="links">Links</string>
     <string name="reviews">Reviews</string>
 
-    <!--Text for empty reviews-->
+    <!--Text for empty fields-->
     <string name="empty_reviews">No reviews for this movie.</string>
+    <string name="empty_trailers">No trailers for this movie.</string>
 
 </resources>

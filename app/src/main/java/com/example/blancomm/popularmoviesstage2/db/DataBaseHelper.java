@@ -31,16 +31,14 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
 
-            POIsDB.onCreate(sqLiteDatabase);
-            POIsDetailDB.onCreate(sqLiteDatabase);
+            FavoritesDB.onCreate(sqLiteDatabase);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
 
-            POIsDB.onUpgrade(sqLiteDatabase, oldVersion, newVersion);
-            POIsDetailDB.onUpgrade(sqLiteDatabase, oldVersion, newVersion);
+            FavoritesDB.onUpgrade(sqLiteDatabase, oldVersion, newVersion);
 
         }
 
