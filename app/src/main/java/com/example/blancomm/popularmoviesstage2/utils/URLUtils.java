@@ -54,7 +54,7 @@ public class URLUtils {
         return builder.build().toString();
     }
 
-    public static String getURLMovieDtail(String idMovie) throws UnsupportedEncodingException {
+    public static String getURLMovieDetail(String idMovie) throws UnsupportedEncodingException {
 
         Uri.Builder builder = new Uri.Builder();
         builder.scheme(Constant.SCHEME_URL)

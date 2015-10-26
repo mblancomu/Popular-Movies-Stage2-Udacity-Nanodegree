@@ -1,21 +1,30 @@
 package com.example.blancomm.popularmoviesstage2.ui;
 
+import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.VolleyListeners;
 import com.example.blancomm.popularmoviesstage2.adapters.EndlessRecyclerOnScrollListener;
 import com.example.blancomm.popularmoviesstage2.adapters.MainRecyclerAdapter;
+import com.example.blancomm.popularmoviesstage2.db.SqlHandler;
+import com.example.blancomm.popularmoviesstage2.model.FavoriteInfo;
+import com.example.blancomm.popularmoviesstage2.model.MovieDetailInfo;
 import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage2.network.VolleyRequest;
 import com.example.blancomm.popularmoviesstage2.utils.ConfigDevice;
 import com.example.blancomm.popularmoviesstage2.utils.Constant;
+import com.example.blancomm.popularmoviesstage2.utils.JSONActions;
+import com.example.blancomm.popularmoviesstage2.utils.TransparentProgressDialog;
 import com.example.blancomm.popularmoviesstage2.utils.URLUtils;
 
 import org.json.JSONArray;
@@ -35,6 +44,7 @@ public class MainFragment extends Fragment implements VolleyListeners {
     private GridLayoutManager mLayoutManager;
     private int mPosition;
     private int current_page = 1;
+    private int configDevice;
 
     public MainFragment() {
     }
@@ -55,13 +65,28 @@ public class MainFragment extends Fragment implements VolleyListeners {
 
         mPosition =  getArguments().getInt(TAB_POSITION);
 
-        try {
+        if (savedInstanceState != null){
 
-            VolleyRequest.requestJsonMovies(this, setURLFromPosition(mPosition));
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            configDevice = savedInstanceState.getInt(Constant.CONFIG_DEVICE);
+        } else {
+            configDevice = getResources().getConfiguration().orientation;
         }
+
+        if (mPosition == 3){
+
+            favoritesRequest();
+        } else {
+
+            beginRequest(mPosition);
+        }
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(Constant.CONFIG_DEVICE, configDevice);
 
     }
 
@@ -97,6 +122,16 @@ public class MainFragment extends Fragment implements VolleyListeners {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        int currentOrientation = getResources().getConfiguration().orientation;
+
+        if (configDevice != currentOrientation){
+
+           beginRequest(mPosition);
+
+            configDevice = currentOrientation;
+
+        }
 
         Bundle args = getArguments();
         int tabPosition = args.getInt(TAB_POSITION);
@@ -142,36 +177,28 @@ public class MainFragment extends Fragment implements VolleyListeners {
     public void onFinishJsonMoviesRequest(JSONObject jsonObject) {
 
         try {
-
-            JSONArray jsonMovies = jsonObject.getJSONArray("results");
-
-            for(int i =0; i < jsonMovies.length(); i++) {
-                JSONObject jsonMovie = jsonMovies.getJSONObject(i);
-
-                MoviesInfo movie = new MoviesInfo();
-                movie.setAdult(jsonMovie.getString(Constant.PARAM_ADULT));
-                movie.setDescription(jsonMovie.getString(Constant.PARAM_OVERVIEW));
-                movie.setGenreIds(jsonMovie.getString(Constant.PARAM_GENRES_IDS));
-                movie.setTitle(jsonMovie.getString(Constant.PARAM_TITLE));
-                movie.setId(jsonMovie.getString(Constant.PARAM_ID));
-                movie.setImageDetail(jsonMovie.getString(Constant.PARAM_BACKDROP));
-                movie.setOriginalLanguage(jsonMovie.getString(Constant.PARAM_ORI_LANGUAGE));
-                movie.setOriginalTitle(jsonMovie.getString(Constant.PARAM_ORI_TITLE));
-                movie.setReleaseDate(jsonMovie.getString(Constant.PARAM_RE_DATE));
-                movie.setThumnail(jsonMovie.getString(Constant.PARAM_POSTER));
-                movie.setPopularity(jsonMovie.getString(Constant.PARAM_POPULARITY));
-                movie.setVideo(jsonMovie.getString(Constant.PARAM_VIDEO));
-                movie.setVoteAverage(jsonMovie.getString(Constant.PARAM_VOTE_AVERAGE));
-                movie.setVoteCount(jsonMovie.getString(Constant.PARAM_VOTE_COUNT));
-
-                mMovies.add(movie);
-            }
-
+            mMovies = JSONActions.parse(jsonObject);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         mAdapter.updateResults(mMovies,getActivity());
+        getActivity().findViewById(R.id.back_progress).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.progressbar).setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onFinishJsonFavoritesRequest(JSONObject jsonObject) {
+
+        try {
+            mMovies.add(JSONActions.parseFavorites(jsonObject));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mAdapter.updateResults(mMovies, getActivity());
+        getActivity().findViewById(R.id.back_progress).setVisibility(View.GONE);
+        getActivity().findViewById(R.id.progressbar).setVisibility(View.GONE);
     }
 
     /**
@@ -202,4 +229,41 @@ public class MainFragment extends Fragment implements VolleyListeners {
         mAdapter.notifyDataSetChanged();
 
     }
+
+    private void beginRequest(int position){
+
+        try {
+
+            VolleyRequest.requestJsonMovies(this, setURLFromPosition(position));
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void favoritesRequest(){
+
+        List<FavoriteInfo> favorites = SqlHandler.getAllFavorites();
+
+        int favSize = favorites.size();
+
+        Log.e(TAG, "Fav: " + favSize);
+
+        //getView().findViewById(R.id.empty_favorites).setVisibility(favSize == 0 ? View.VISIBLE : View.GONE);
+
+        for (int i= 0; i < favSize; i++){
+
+            try {
+
+                VolleyRequest.requestJsonFavorites(this, URLUtils.getURLMovieDetail(favorites.get(i).getIdMovie()));
+
+                Log.e(TAG, "Id: " + favorites.get(i).getIdMovie());
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 }

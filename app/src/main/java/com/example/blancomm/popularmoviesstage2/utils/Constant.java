@@ -74,4 +74,8 @@ public class Constant {
     public static final String DATABASE_NAME = "movies.db";
     public static final int DATABASE_VERSION = 1;
 
+    //Params for begin the request in main and detail fragment
+    public static final String ID_MOVIE = "id";
+    public static final String CONFIG_DEVICE = "config";
+
 }

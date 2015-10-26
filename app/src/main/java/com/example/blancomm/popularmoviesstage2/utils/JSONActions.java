@@ -47,6 +47,29 @@ public class JSONActions {
         return movie;
     }
 
+    public static MoviesInfo parseFavorites(JSONObject json) throws JSONException {
+
+        JSONObject jsonMovie = json;
+
+        MoviesInfo movie = new MoviesInfo();
+        movie.setAdult(jsonMovie.getString(Constant.PARAM_ADULT));
+        movie.setDescription(jsonMovie.getString(Constant.PARAM_OVERVIEW));
+        //movie.setGenreIds(jsonMovie.getString(Constant.PARAM_GENRES_IDS));
+        movie.setTitle(jsonMovie.getString(Constant.PARAM_TITLE));
+        movie.setId(jsonMovie.getString(Constant.PARAM_ID));
+        movie.setImageDetail(jsonMovie.getString(Constant.PARAM_BACKDROP));
+        movie.setOriginalLanguage(jsonMovie.getString(Constant.PARAM_ORI_LANGUAGE));
+        movie.setOriginalTitle(jsonMovie.getString(Constant.PARAM_ORI_TITLE));
+        movie.setReleaseDate(jsonMovie.getString(Constant.PARAM_RE_DATE));
+        movie.setThumnail(jsonMovie.getString(Constant.PARAM_POSTER));
+        movie.setPopularity(jsonMovie.getString(Constant.PARAM_POPULARITY));
+        movie.setVideo(jsonMovie.getString(Constant.PARAM_VIDEO));
+        movie.setVoteAverage(jsonMovie.getString(Constant.PARAM_VOTE_AVERAGE));
+        movie.setVoteCount(jsonMovie.getString(Constant.PARAM_VOTE_COUNT));
+
+        return movie;
+    }
+
     public static List<MoviesInfo> parse(JSONObject json) throws JSONException {
         ArrayList<MoviesInfo> movies = new ArrayList<MoviesInfo>();
 
@@ -56,20 +79,20 @@ public class JSONActions {
             JSONObject jsonMovie = jsonMovies.getJSONObject(i);
 
             MoviesInfo movie = new MoviesInfo();
-            movie.setAdult(jsonMovie.getString("adult"));
-            movie.setDescription(jsonMovie.getString("overview"));
-            movie.setGenreIds(jsonMovie.getString("genre_ids"));
-            movie.setTitle(jsonMovie.getString("title"));
-            movie.setId(jsonMovie.getString("id"));
-            movie.setImageDetail(jsonMovie.getString("backdrop_path"));
-            movie.setOriginalLanguage(jsonMovie.getString("original_language"));
-            movie.setOriginalTitle(jsonMovie.getString("original_title"));
-            movie.setReleaseDate(jsonMovie.getString("release_date"));
-            movie.setThumnail(jsonMovie.getString("poster_path"));
-            movie.setPopularity(jsonMovie.getString("popularity"));
-            movie.setVideo(jsonMovie.getString("video"));
-            movie.setVoteAverage(jsonMovie.getString("vote_average"));
-            movie.setVoteCount(jsonMovie.getString("vote_count"));
+            movie.setAdult(jsonMovie.getString(Constant.PARAM_ADULT));
+            movie.setDescription(jsonMovie.getString(Constant.PARAM_OVERVIEW));
+            movie.setGenreIds(jsonMovie.getString(Constant.PARAM_GENRES_IDS));
+            movie.setTitle(jsonMovie.getString(Constant.PARAM_TITLE));
+            movie.setId(jsonMovie.getString(Constant.PARAM_ID));
+            movie.setImageDetail(jsonMovie.getString(Constant.PARAM_BACKDROP));
+            movie.setOriginalLanguage(jsonMovie.getString(Constant.PARAM_ORI_LANGUAGE));
+            movie.setOriginalTitle(jsonMovie.getString(Constant.PARAM_ORI_TITLE));
+            movie.setReleaseDate(jsonMovie.getString(Constant.PARAM_RE_DATE));
+            movie.setThumnail(jsonMovie.getString(Constant.PARAM_POSTER));
+            movie.setPopularity(jsonMovie.getString(Constant.PARAM_POPULARITY));
+            movie.setVideo(jsonMovie.getString(Constant.PARAM_VIDEO));
+            movie.setVoteAverage(jsonMovie.getString(Constant.PARAM_VOTE_AVERAGE));
+            movie.setVoteCount(jsonMovie.getString(Constant.PARAM_VOTE_COUNT));
 
             movies.add(movie);
         }

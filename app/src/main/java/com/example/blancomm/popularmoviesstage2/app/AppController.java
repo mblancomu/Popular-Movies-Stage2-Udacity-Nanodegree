@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.example.blancomm.popularmoviesstage2.db.SqlHandler;
 import com.example.blancomm.popularmoviesstage2.utils.LruBitmapCache;
 import com.example.blancomm.popularmoviesstage2.utils.TypefaceUtil;
 
@@ -17,6 +18,7 @@ public class AppController extends Application {
 
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
+    private static SqlHandler mSqlHandler;
 
     private static AppController mInstance;
 
@@ -24,11 +26,15 @@ public class AppController extends Application {
     public void onCreate() {
         super.onCreate();
         mInstance = this;
+        mSqlHandler = new SqlHandler(getApplicationContext());
         TypefaceUtil.overrideFont(getApplicationContext(), "NORMAL", "fonts/Roboto-Regular.ttf"); // font from assets: "assets/fonts/Roboto-Regular.ttf
     }
 
     public static synchronized AppController getInstance() {
         return mInstance;
+    }
+    public static synchronized SqlHandler getmSqlHandler(){
+        return mSqlHandler;
     }
 
     public RequestQueue getRequestQueue() {

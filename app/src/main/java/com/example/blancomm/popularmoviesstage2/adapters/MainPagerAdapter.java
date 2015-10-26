@@ -28,6 +28,9 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
             case 2:
                 fragment =  MainFragment.newInstance(position);
                 break;
+            case 3:
+                fragment =  MainFragment.newInstance(position);
+                break;
             default:
                 fragment =  MainFragment.newInstance(position);
                 break;
@@ -39,7 +42,7 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -56,6 +59,9 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
                 break;
             case 2:
                 title = "HIGHEST RATED";
+                break;
+            case 3:
+                title = "FAVORITES";
                 break;
             default:
                 title = "MOST VOTES";

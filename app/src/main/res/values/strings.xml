@@ -34,4 +34,7 @@
     <string name="empty_reviews">No reviews for this movie.</string>
     <string name="empty_trailers">No trailers for this movie.</string>
 
+    <!--Favorites list-->
+    <string name="empty_favorites">No favorites added</string>
+
 </resources>

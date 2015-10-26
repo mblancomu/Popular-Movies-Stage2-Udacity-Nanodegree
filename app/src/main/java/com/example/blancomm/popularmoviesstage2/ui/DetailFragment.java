@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -26,11 +27,15 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.VolleyListeners;
+import com.example.blancomm.popularmoviesstage2.app.AppController;
+import com.example.blancomm.popularmoviesstage2.db.FavoritesDB;
+import com.example.blancomm.popularmoviesstage2.db.SqlHandler;
+import com.example.blancomm.popularmoviesstage2.model.FavoriteInfo;
 import com.example.blancomm.popularmoviesstage2.model.MovieDetailInfo;
 import com.example.blancomm.popularmoviesstage2.model.ReviewsInfo;
 import com.example.blancomm.popularmoviesstage2.model.VideosInfo;
 import com.example.blancomm.popularmoviesstage2.network.VolleyRequest;
-import com.example.blancomm.popularmoviesstage2.utils.AnimationsUtils;
+import com.example.blancomm.popularmoviesstage2.utils.AnimationsUtilities;
 import com.example.blancomm.popularmoviesstage2.utils.Constant;
 import com.example.blancomm.popularmoviesstage2.utils.JSONActions;
 import com.example.blancomm.popularmoviesstage2.utils.URLUtils;
@@ -65,6 +70,8 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private List<VideosInfo> videos;
     private List<ReviewsInfo> reviews;
     private LayoutInflater inflater;
+    private int configDevice;
+    private boolean pulsado = false;
 
     public DetailFragment() {
     }
@@ -83,21 +90,18 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         setHasOptionsMenu(true);
         setRetainInstance(true);
 
-        mIdMovie = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
+        if (savedInstanceState != null){
 
-        try {
+            mIdMovie = savedInstanceState.getString(Constant.ID_MOVIE);
+            configDevice = savedInstanceState.getInt(Constant.CONFIG_DEVICE);
 
-            VolleyRequest.requestJsonMovies(this, URLUtils.getURLMovieDtail(mIdMovie));
-            VolleyRequest.requestJsonVideos(this, URLUtils.getURLMovieVideos(mIdMovie));
-            VolleyRequest.requestJsonReviews(this, URLUtils.getURLMovieReviews(mIdMovie));
+        } else {
 
-            Log.e(TAG, URLUtils.getURLMovieReviews(mIdMovie));
-            Log.e(TAG, URLUtils.getURLMovieVideos(mIdMovie));
-
-        } catch (UnsupportedEncodingException e) {
-
-            e.printStackTrace();
+            mIdMovie = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
+            configDevice = getResources().getConfiguration().orientation;
         }
+
+        beginRequest(mIdMovie);
 
     }
 
@@ -105,12 +109,30 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        int currentOrientation = getResources().getConfiguration().orientation;
+
+        if (configDevice != currentOrientation){
+
+            beginRequest(mIdMovie);
+
+            configDevice = currentOrientation;
+
+        }
+
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
         instantiateObjects(rootView);
 
 
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(Constant.ID_MOVIE, mIdMovie);
+        outState.putInt(Constant.CONFIG_DEVICE, configDevice);
     }
 
     /**
@@ -139,16 +161,15 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         mIconsGenres = (LinearLayout)view.findViewById(R.id.ll_genres);
         mMainView = (LinearLayout)view.findViewById(R.id.ll_main);
 
-
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         view.findViewById(R.id.iv_website).setOnClickListener(mLinksClickListener);
         view.findViewById(R.id.iv_imdb).setOnClickListener(mLinksClickListener);
 
-        AnimationsUtils.fadeInAlphaIcons(getActivity(), mIconVotes, R.anim.tween_votes);
-        AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconPopularity, R.anim.tween_popularity);
-        AnimationsUtils.fadeInAlphaIcons(getActivity(),mIconRate, R.anim.tween_rate);
-        AnimationsUtils.fadeInAlphaIcons(getActivity(), mIconDate, R.anim.tween_imdb);
+        AnimationsUtilities.fadeInAlphaIcons(getActivity(), mIconVotes, R.anim.tween_votes);
+        AnimationsUtilities.fadeInAlphaIcons(getActivity(), mIconPopularity, R.anim.tween_popularity);
+        AnimationsUtilities.fadeInAlphaIcons(getActivity(), mIconRate, R.anim.tween_rate);
+        AnimationsUtilities.fadeInAlphaIcons(getActivity(), mIconDate, R.anim.tween_imdb);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         ((DetailActivity) getActivity()).setSupportActionBar(toolbar);
@@ -156,14 +177,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
         UtilsView.makeCollapsingToolbarLayoutTypeface(collapsingToolbar, getActivity());
-
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         /**
          * catch the listeners from AppBarLayout. When is collapse and expanded, do differents actions.
@@ -214,6 +227,11 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
     }
 
+    @Override
+    public void onFinishJsonFavoritesRequest(JSONObject jsonObject) {
+
+    }
+
     /**
      * Get data from json videos for a movie id, request on volleyrequest class.
      * @param jsonObject
@@ -250,7 +268,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private void injectData(MovieDetailInfo movieDetailInfo) throws JSONException {
 
         VolleyRequest.requestImage(Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail(), mImageDetail);
-        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + getActivity().getString(R.string.width_image_thumb) + movieDetailInfo.getThumnail(), mThumbnail);
+        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + "w185/" + movieDetailInfo.getThumnail(), mThumbnail);
 
         mTitle = movieDetailInfo.getTitle();
         collapsingToolbar.setTitle(mTitle);
@@ -269,6 +287,30 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         setCountryCard(inflater);
 
         mFlag.setImageResource(UtilsView.setFlagLanguageDetail(movieDetailInfo.getOriginalLanguage()));
+
+        final FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);
+        final boolean existe = SqlHandler.checkidExitsorNot(FavoritesDB.TABLE_FAVORITES, FavoritesDB.COLUMN_IDMOVIE, movieDetail.getId());
+        fab.setImageResource(existe ? R.drawable.ic_favorite_select : R.drawable.ic_favorite_normal);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                pulsado = !pulsado ? true : false;
+                int isChecked = !pulsado ? 0 : 1;
+
+                fab.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.expand_button));
+                fab.setImageResource(pulsado ? R.drawable.ic_favorite_select : R.drawable.ic_favorite_normal);
+
+                //Save object in DB when click on favorite button.
+                FavoriteInfo favorite = new FavoriteInfo(movieDetail.getId(), movieDetail.getTitle(), isChecked);
+
+                SqlHandler.saveFavoriteObject(favorite, AppController.getmSqlHandler());
+
+            }
+        });
+
+        getView().findViewById(R.id.progressbar_detail).setVisibility(View.GONE);
+        getView().findViewById(R.id.back_progress_detail).setVisibility(View.GONE);
 
     }
 
@@ -460,6 +502,24 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(browserIntent);
+
+    }
+
+    private void beginRequest(String id){
+
+        try {
+
+            VolleyRequest.requestJsonMovies(this, URLUtils.getURLMovieDetail(id));
+            VolleyRequest.requestJsonVideos(this, URLUtils.getURLMovieVideos(id));
+            VolleyRequest.requestJsonReviews(this, URLUtils.getURLMovieReviews(id));
+
+            Log.e(TAG, URLUtils.getURLMovieReviews(id));
+            Log.e(TAG, URLUtils.getURLMovieVideos(id));
+
+        } catch (UnsupportedEncodingException e) {
+
+            e.printStackTrace();
+        }
 
     }
 }

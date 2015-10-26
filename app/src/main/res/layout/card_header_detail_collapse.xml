@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/card_header_collapse"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:layout_marginRight="2dp"
     app:cardBackgroundColor="@android:color/transparent"
     app:cardCornerRadius="2dp"
@@ -20,10 +20,11 @@
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/thumbnail_film2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="180dp"
+            android:layout_height="200dp"
             android:layout_gravity="bottom"
-            android:src="@drawable/imagen_prueba"
+            android:src="@drawable/ic_image"
+            android:scaleType="centerCrop"
             android:transitionName="@string/transition_grid_to_detail" />
 
 

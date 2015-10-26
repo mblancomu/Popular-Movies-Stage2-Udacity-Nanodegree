@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.ImageButton;
 
+import com.example.blancomm.popularmoviesstage2.model.FavoriteInfo;
 import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage2.utils.Constant;
 
@@ -70,16 +72,29 @@ public class SqlHandler {
     /**
      * Put a new POISInfo object in the table pois.
      *
-     * @param moviesInfo
+     * @param favoriteInfo
      */
-    public void putFavorites(MoviesInfo moviesInfo) {
+    public void putFavorites(FavoriteInfo favoriteInfo) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        Log.e(TAG, moviesInfo.getTitle().toString());
-        values.put(FavoritesDB.COLUMN_IDMOVIE, moviesInfo.getId());
+        values.put(FavoritesDB.COLUMN_IDMOVIE, favoriteInfo.getIdMovie());
+        values.put(FavoritesDB.COLUMN_TITLE, favoriteInfo.getTitle());
+        values.put(FavoritesDB.COLUMN_ISCHECKED, favoriteInfo.getIsChecked());
         db.insert(FavoritesDB.TABLE_FAVORITES, null, values);
         db.close();
+    }
+
+    public void deleteFavorite(FavoriteInfo favoriteInfo){
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(FavoritesDB.COLUMN_IDMOVIE, favoriteInfo.getIdMovie());
+        values.put(FavoritesDB.COLUMN_TITLE, favoriteInfo.getTitle());
+        values.put(FavoritesDB.COLUMN_ISCHECKED, favoriteInfo.getIsChecked());
+        db.delete(FavoritesDB.TABLE_FAVORITES, FavoritesDB.COLUMN_IDMOVIE + " = ?",
+                new String[]{String.valueOf(favoriteInfo.getIdMovie())});
+        db.close();
+
     }
 
     /**
@@ -87,9 +102,9 @@ public class SqlHandler {
      *
      * @return
      */
-    public static List<MoviesInfo> getAllFavorites() {
+    public static List<FavoriteInfo> getAllFavorites() {
 
-        List<MoviesInfo> movies = null;
+        List<FavoriteInfo> favorites = null;
         try {
 
             String selectQuery = "SELECT  * FROM " + FavoritesDB.TABLE_FAVORITES;
@@ -100,11 +115,9 @@ public class SqlHandler {
             if (cursor.moveToFirst()) {
                 do {
 
-                    movies = new ArrayList<>();
-                    MoviesInfo moviesInfo = new MoviesInfo();
-                    moviesInfo.setId(cursor.getString(0));
-
-                    movies.add(moviesInfo);
+                    favorites = new ArrayList<>();
+                    FavoriteInfo favoriteInfo = new FavoriteInfo(cursor.getString(1), cursor.getString(2), cursor.getInt(3));
+                    favorites.add(favoriteInfo);
 
                 } while (cursor.moveToNext());
             }
@@ -113,15 +126,15 @@ public class SqlHandler {
         } catch (Exception e) {
             // TODO: handle exception
         }
-        return movies;
+        return favorites;
     }
 
     /*
-     * Get the POisDetail info from his id.
+     * Get the Favorite info from his id.
      */
-    public static MoviesInfo getMovie(String id) {
+    public static FavoriteInfo getFavorite(String id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        MoviesInfo moviesInfo = null;
+        FavoriteInfo favoriteInfo = null;
 
         Cursor cursor = db.query(FavoritesDB.TABLE_FAVORITES, new String[]{FavoritesDB.COLUMN_IDMOVIE,
                 }, FavoritesDB.COLUMN_IDMOVIE + "=?",
@@ -131,14 +144,14 @@ public class SqlHandler {
 
             cursor.moveToFirst();
 
-            moviesInfo = new MoviesInfo();
+            favoriteInfo = new FavoriteInfo(cursor.getString(1), cursor.getString(2), cursor.getInt(3));
 
         }
 
         cursor.close();
         db.close();
 
-        return moviesInfo;
+        return favoriteInfo;
     }
 
     /*
@@ -162,6 +175,33 @@ public class SqlHandler {
                 c.close();
             }
         }
+    }
+
+    /*
+  * Save the favorites items, with a object FavoriteInfo.
+  * If exist is save, in other, is update.
+ */
+    public static void saveFavoriteObject(FavoriteInfo item, SqlHandler sqlHandler) {
+
+        FavoriteInfo favorite;
+        favorite = item;
+
+        boolean existe = SqlHandler.checkidExitsorNot(FavoritesDB.TABLE_FAVORITES, FavoritesDB.COLUMN_IDMOVIE, item.getIdMovie());
+
+        if (!existe) {
+
+            sqlHandler.putFavorites(favorite);
+
+        } else {
+
+            sqlHandler.deleteFavorite(favorite);
+        }
+
+        sqlHandler.closeDDBB();
+    }
+
+    public void closeDDBB() {
+        sqLiteDatabase.close();
     }
 
     /*
