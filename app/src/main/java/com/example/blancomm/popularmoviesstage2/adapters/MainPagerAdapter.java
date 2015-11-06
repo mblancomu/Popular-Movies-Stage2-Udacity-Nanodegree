@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.example.blancomm.popularmoviesstage2.ui.FavoritesFragment;
 import com.example.blancomm.popularmoviesstage2.ui.MainFragment;
 
 
@@ -26,10 +27,7 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
                 fragment =  MainFragment.newInstance(position);
                 break;
             case 2:
-                fragment =  MainFragment.newInstance(position);
-                break;
-            case 3:
-                fragment =  MainFragment.newInstance(position);
+                fragment =  FavoritesFragment.newInstance(position);
                 break;
             default:
                 fragment =  MainFragment.newInstance(position);
@@ -42,7 +40,7 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 4;
+        return 3;
     }
 
     @Override
@@ -52,19 +50,16 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position){
             case 0:
-                title = "MOST VOTES";
-                break;
-            case 1:
                 title = "MOST POPULAR";
                 break;
-            case 2:
+            case 1:
                 title = "HIGHEST RATED";
                 break;
-            case 3:
+            case 2:
                 title = "FAVORITES";
                 break;
             default:
-                title = "MOST VOTES";
+                title = "MOST POPULAR";
         }
 
         return title;

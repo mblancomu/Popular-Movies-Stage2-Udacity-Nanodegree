@@ -1,6 +1,5 @@
 package com.example.blancomm.popularmoviesstage2.adapters;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.CardView;
@@ -9,17 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
-import com.example.blancomm.popularmoviesstage2.network.VolleyRequest;
 import com.example.blancomm.popularmoviesstage2.ui.DetailActivity;
 import com.example.blancomm.popularmoviesstage2.utils.Constant;
-import com.example.blancomm.popularmoviesstage2.utils.TransparentProgressDialog;
 import com.example.blancomm.popularmoviesstage2.utils.UtilsView;
 import com.squareup.picasso.Picasso;
 
@@ -30,10 +25,12 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
     private List<MoviesInfo> mItems;
     private Context mContext;
     private String TAG = MainRecyclerAdapter.class.getSimpleName();
+    private int mPositionTab;
 
-    public MainRecyclerAdapter(List<MoviesInfo> items, Context context) {
+    public MainRecyclerAdapter(List<MoviesInfo> items, Context context, int positionTab) {
         mItems = items;
         mContext = context;
+        mPositionTab = positionTab;
     }
 
     @Override
@@ -82,6 +79,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
                 Context context = view.getContext();
                 Intent intent = new Intent(context, DetailActivity.class);
                 intent.putExtra(Intent.EXTRA_TEXT, item.getId());
+                intent.putExtra(Constant.EXTRA_TAB, mPositionTab);
                 context.startActivity(intent);
             }
         });

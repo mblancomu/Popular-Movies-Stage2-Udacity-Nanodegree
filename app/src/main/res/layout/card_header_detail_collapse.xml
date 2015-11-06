@@ -18,7 +18,7 @@
 
         android:orientation="horizontal">
 
-        <com.android.volley.toolbox.NetworkImageView
+        <ImageView
             android:id="@+id/thumbnail_film2"
             android:layout_width="180dp"
             android:layout_height="200dp"

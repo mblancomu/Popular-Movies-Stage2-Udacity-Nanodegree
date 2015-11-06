@@ -2,6 +2,7 @@ package com.example.blancomm.popularmoviesstage2.ui;
 
 import android.app.ProgressDialog;
 import android.content.res.Configuration;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.VolleyListeners;
@@ -45,6 +47,8 @@ public class MainFragment extends Fragment implements VolleyListeners {
     private int mPosition;
     private int current_page = 1;
     private int configDevice;
+    private RecyclerView recyclerView;
+    private TextView mEmpty;
 
     public MainFragment() {
     }
@@ -72,14 +76,6 @@ public class MainFragment extends Fragment implements VolleyListeners {
             configDevice = getResources().getConfiguration().orientation;
         }
 
-        if (mPosition == 3){
-
-            favoritesRequest();
-        } else {
-
-            beginRequest(mPosition);
-        }
-
     }
 
     @Override
@@ -101,18 +97,14 @@ public class MainFragment extends Fragment implements VolleyListeners {
         String url = "";
 
         switch (position){
-
             case 0:
-                url = URLUtils.getURLLatest(current_page);
-                break;
-            case 1:
                 url =  URLUtils.getURLPopularity(current_page);
                 break;
-            case 2:
+            case 1:
                 url =  URLUtils.getURLRate(current_page);
                 break;
             default:
-                url =  URLUtils.getURLLatest(current_page);
+                url =  URLUtils.getURLPopularity(current_page);
                 break;
         }
 
@@ -122,27 +114,24 @@ public class MainFragment extends Fragment implements VolleyListeners {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View v =  inflater.inflate(R.layout.fragment_main, container, false);
 
         int currentOrientation = getResources().getConfiguration().orientation;
 
         if (configDevice != currentOrientation){
 
            beginRequest(mPosition);
-
             configDevice = currentOrientation;
 
         }
 
-        Bundle args = getArguments();
-        int tabPosition = args.getInt(TAB_POSITION);
-
         mMovies = new ArrayList<MoviesInfo>();
-        mAdapter = new MainRecyclerAdapter(mMovies, getActivity());
+        mAdapter = new MainRecyclerAdapter(mMovies, getActivity(), mPosition);
 
         mLayoutManager = new GridLayoutManager(getActivity(), ConfigDevice.getNumberColumnsGrid(getActivity()));
+        mEmpty = (TextView)v.findViewById(R.id.no_movies);
 
-        View v =  inflater.inflate(R.layout.fragment_main, container, false);
-        RecyclerView recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
+        recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(mAdapter);
@@ -160,6 +149,8 @@ public class MainFragment extends Fragment implements VolleyListeners {
 
         });
 
+        beginRequest(mPosition);
+
         return v;
     }
 
@@ -170,7 +161,7 @@ public class MainFragment extends Fragment implements VolleyListeners {
     }
 
     /**
-     * Get data form the request on volleyrequest for all movies.
+     * Get data from the request on volleyrequest for all movies.
      * @param jsonObject
      */
     @Override
@@ -182,21 +173,17 @@ public class MainFragment extends Fragment implements VolleyListeners {
             e.printStackTrace();
         }
 
-        mAdapter.updateResults(mMovies,getActivity());
-        getActivity().findViewById(R.id.back_progress).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.progressbar).setVisibility(View.GONE);
-    }
+        if (mMovies != null){
 
-    @Override
-    public void onFinishJsonFavoritesRequest(JSONObject jsonObject) {
+            mAdapter.updateResults(mMovies, getActivity());
+            recyclerView.setVisibility(View.VISIBLE);
 
-        try {
-            mMovies.add(JSONActions.parseFavorites(jsonObject));
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } else {
+
+           mEmpty.setVisibility(mMovies.size() > 0 ? View.GONE : View.VISIBLE);
+            recyclerView.setVisibility(View.GONE);
         }
 
-        mAdapter.updateResults(mMovies, getActivity());
         getActivity().findViewById(R.id.back_progress).setVisibility(View.GONE);
         getActivity().findViewById(R.id.progressbar).setVisibility(View.GONE);
     }
@@ -230,6 +217,10 @@ public class MainFragment extends Fragment implements VolleyListeners {
 
     }
 
+    /**
+     * Init request for every tab, less the favorites tabs.
+     * @param position
+     */
     private void beginRequest(int position){
 
         try {
@@ -241,29 +232,5 @@ public class MainFragment extends Fragment implements VolleyListeners {
         }
     }
 
-    private void favoritesRequest(){
-
-        List<FavoriteInfo> favorites = SqlHandler.getAllFavorites();
-
-        int favSize = favorites.size();
-
-        Log.e(TAG, "Fav: " + favSize);
-
-        //getView().findViewById(R.id.empty_favorites).setVisibility(favSize == 0 ? View.VISIBLE : View.GONE);
-
-        for (int i= 0; i < favSize; i++){
-
-            try {
-
-                VolleyRequest.requestJsonFavorites(this, URLUtils.getURLMovieDetail(favorites.get(i).getIdMovie()));
-
-                Log.e(TAG, "Id: " + favorites.get(i).getIdMovie());
-
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
 }

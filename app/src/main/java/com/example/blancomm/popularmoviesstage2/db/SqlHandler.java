@@ -5,10 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.widget.ImageButton;
 
+import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.model.FavoriteInfo;
+import com.example.blancomm.popularmoviesstage2.model.MovieDetailInfo;
 import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage2.utils.Constant;
 
@@ -70,41 +73,62 @@ public class SqlHandler {
     }
 
     /**
-     * Put a new POISInfo object in the table pois.
+     * Put a new MovieInfo object in the table favorites.
      *
-     * @param favoriteInfo
+     * @param moviesInfo
      */
-    public void putFavorites(FavoriteInfo favoriteInfo) {
+    public void putFavorites(MoviesInfo moviesInfo) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-
-        values.put(FavoritesDB.COLUMN_IDMOVIE, favoriteInfo.getIdMovie());
-        values.put(FavoritesDB.COLUMN_TITLE, favoriteInfo.getTitle());
-        values.put(FavoritesDB.COLUMN_ISCHECKED, favoriteInfo.getIsChecked());
+        values.put(FavoritesDB.COLUMN_IDMOVIE, moviesInfo.getId());
+        values.put(FavoritesDB.COLUMN_TITLE, moviesInfo.getTitle());
+        values.put(FavoritesDB.COLUMN_ADULT, moviesInfo.getAdult());
+        values.put(FavoritesDB.COLUMN_IMAGE, moviesInfo.getImageDetail());
+        values.put(FavoritesDB.COLUMN_GENRES, moviesInfo.getGenreIds());
+        values.put(FavoritesDB.COLUMN_ORLANG, moviesInfo.getOriginalLanguage());
+        values.put(FavoritesDB.COLUMN_ORTITLE, moviesInfo.getOriginalTitle());
+        values.put(FavoritesDB.COLUMN_DESC, moviesInfo.getDescription());
+        values.put(FavoritesDB.COLUMN_DATE, moviesInfo.getReleaseDate());
+        values.put(FavoritesDB.COLUMN_THUMB, moviesInfo.getThumnail());
+        values.put(FavoritesDB.COLUMN_POPULAR, moviesInfo.getPopularity());
+        values.put(FavoritesDB.COLUMN_VIDEO, moviesInfo.getVideo());
+        values.put(FavoritesDB.COLUMN_AVERAGE, moviesInfo.getVoteAverage());
+        values.put(FavoritesDB.COLUMN_COUNT, moviesInfo.getVoteCount());
         db.insert(FavoritesDB.TABLE_FAVORITES, null, values);
         db.close();
     }
 
-    public void deleteFavorite(FavoriteInfo favoriteInfo){
+    public void deleteFavorite(MoviesInfo moviesInfo){
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(FavoritesDB.COLUMN_IDMOVIE, favoriteInfo.getIdMovie());
-        values.put(FavoritesDB.COLUMN_TITLE, favoriteInfo.getTitle());
-        values.put(FavoritesDB.COLUMN_ISCHECKED, favoriteInfo.getIsChecked());
+        values.put(FavoritesDB.COLUMN_IDMOVIE, moviesInfo.getId());
+        values.put(FavoritesDB.COLUMN_TITLE, moviesInfo.getTitle());
+        values.put(FavoritesDB.COLUMN_ADULT, moviesInfo.getAdult());
+        values.put(FavoritesDB.COLUMN_IMAGE, moviesInfo.getImageDetail());
+        values.put(FavoritesDB.COLUMN_GENRES, moviesInfo.getGenreIds());
+        values.put(FavoritesDB.COLUMN_ORLANG, moviesInfo.getOriginalLanguage());
+        values.put(FavoritesDB.COLUMN_ORTITLE, moviesInfo.getOriginalTitle());
+        values.put(FavoritesDB.COLUMN_DESC, moviesInfo.getDescription());
+        values.put(FavoritesDB.COLUMN_DATE, moviesInfo.getReleaseDate());
+        values.put(FavoritesDB.COLUMN_THUMB, moviesInfo.getThumnail());
+        values.put(FavoritesDB.COLUMN_POPULAR, moviesInfo.getPopularity());
+        values.put(FavoritesDB.COLUMN_VIDEO, moviesInfo.getVideo());
+        values.put(FavoritesDB.COLUMN_AVERAGE, moviesInfo.getVoteAverage());
+        values.put(FavoritesDB.COLUMN_COUNT, moviesInfo.getVoteCount());
         db.delete(FavoritesDB.TABLE_FAVORITES, FavoritesDB.COLUMN_IDMOVIE + " = ?",
-                new String[]{String.valueOf(favoriteInfo.getIdMovie())});
+                new String[]{String.valueOf(moviesInfo.getId())});
         db.close();
 
     }
 
     /**
-     * Get all registers for the table POIsDB.
+     * Get all registers for the table Favorites.
      *
      * @return
      */
-    public static List<FavoriteInfo> getAllFavorites() {
+    public static List<MoviesInfo> getAllFavorites() {
 
-        List<FavoriteInfo> favorites = null;
+        List<MoviesInfo> favorites = null;
         try {
 
             String selectQuery = "SELECT  * FROM " + FavoritesDB.TABLE_FAVORITES;
@@ -116,8 +140,22 @@ public class SqlHandler {
                 do {
 
                     favorites = new ArrayList<>();
-                    FavoriteInfo favoriteInfo = new FavoriteInfo(cursor.getString(1), cursor.getString(2), cursor.getInt(3));
-                    favorites.add(favoriteInfo);
+                    MoviesInfo favoritesMovies = new MoviesInfo();
+                    favoritesMovies.setId(cursor.getString(1));
+                    favoritesMovies.setTitle(cursor.getString(2));
+                    favoritesMovies.setAdult(cursor.getString(3));
+                    favoritesMovies.setImageDetail(cursor.getString(4));
+                    favoritesMovies.setGenreIds(cursor.getString(5));
+                    favoritesMovies.setOriginalLanguage(cursor.getString(6));
+                    favoritesMovies.setOriginalTitle(cursor.getString(7));
+                    favoritesMovies.setDescription(cursor.getString(8));
+                    favoritesMovies.setReleaseDate(cursor.getString(9));
+                    favoritesMovies.setThumnail(cursor.getString(10));
+                    favoritesMovies.setPopularity(cursor.getString(11));
+                    favoritesMovies.setVideo(cursor.getString(12));
+                    favoritesMovies.setVoteAverage(cursor.getString(13));
+                    favoritesMovies.setVoteCount(cursor.getString(14));
+                    favorites.add(favoritesMovies);
 
                 } while (cursor.moveToNext());
             }
@@ -132,9 +170,9 @@ public class SqlHandler {
     /*
      * Get the Favorite info from his id.
      */
-    public static FavoriteInfo getFavorite(String id) {
+    public static MoviesInfo getFavorite(String id) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        FavoriteInfo favoriteInfo = null;
+        MoviesInfo favoritesMovies = null;
 
         Cursor cursor = db.query(FavoritesDB.TABLE_FAVORITES, new String[]{FavoritesDB.COLUMN_IDMOVIE,
                 }, FavoritesDB.COLUMN_IDMOVIE + "=?",
@@ -144,14 +182,50 @@ public class SqlHandler {
 
             cursor.moveToFirst();
 
-            favoriteInfo = new FavoriteInfo(cursor.getString(1), cursor.getString(2), cursor.getInt(3));
+            favoritesMovies = new MoviesInfo();
+            favoritesMovies.setId(cursor.getString(1));
+            favoritesMovies.setTitle(cursor.getString(2));
+            favoritesMovies.setAdult(cursor.getString(3));
+            favoritesMovies.setImageDetail(cursor.getString(4));
+            favoritesMovies.setGenreIds(cursor.getString(5));
+            favoritesMovies.setOriginalLanguage(cursor.getString(6));
+            favoritesMovies.setOriginalTitle(cursor.getString(7));
+            favoritesMovies.setDescription(cursor.getString(8));
+            favoritesMovies.setReleaseDate(cursor.getString(9));
+            favoritesMovies.setThumnail(cursor.getString(10));
+            favoritesMovies.setPopularity(cursor.getString(11));
+            favoritesMovies.setVideo(cursor.getString(12));
+            favoritesMovies.setVoteAverage(cursor.getString(13));
+            favoritesMovies.setVoteCount(cursor.getString(14));
 
         }
 
         cursor.close();
         db.close();
 
-        return favoriteInfo;
+        return favoritesMovies;
+    }
+
+    public static MoviesInfo saveFavorite(MovieDetailInfo movieDetail){
+
+        //Save object in DB when click on favorite button.
+        MoviesInfo favoritesMovies = new MoviesInfo();
+        favoritesMovies.setId(movieDetail.getId());
+        favoritesMovies.setTitle(movieDetail.getTitle());
+        favoritesMovies.setAdult(movieDetail.getAdult());
+        favoritesMovies.setImageDetail(movieDetail.getImageDetail());
+        favoritesMovies.setGenreIds(movieDetail.getGenreIds());
+        favoritesMovies.setOriginalLanguage(movieDetail.getOriginalLanguage());
+        favoritesMovies.setOriginalTitle(movieDetail.getOriginalTitle());
+        favoritesMovies.setDescription(movieDetail.getDescription());
+        favoritesMovies.setReleaseDate(movieDetail.getReleaseDate());
+        favoritesMovies.setThumnail(movieDetail.getThumnail());
+        favoritesMovies.setPopularity(movieDetail.getPopularity());
+        favoritesMovies.setVideo(movieDetail.getVideo());
+        favoritesMovies.setVoteAverage(movieDetail.getVoteAverage());
+        favoritesMovies.setVoteCount(movieDetail.getVoteCount());
+
+        return favoritesMovies;
     }
 
     /*
@@ -181,20 +255,22 @@ public class SqlHandler {
   * Save the favorites items, with a object FavoriteInfo.
   * If exist is save, in other, is update.
  */
-    public static void saveFavoriteObject(FavoriteInfo item, SqlHandler sqlHandler) {
+    public static void saveFavoriteObject(MoviesInfo item, SqlHandler sqlHandler, FloatingActionButton fab) {
 
-        FavoriteInfo favorite;
+        MoviesInfo favorite;
         favorite = item;
 
-        boolean existe = SqlHandler.checkidExitsorNot(FavoritesDB.TABLE_FAVORITES, FavoritesDB.COLUMN_IDMOVIE, item.getIdMovie());
+        boolean existe = SqlHandler.checkidExitsorNot(FavoritesDB.TABLE_FAVORITES, FavoritesDB.COLUMN_IDMOVIE, item.getId());
 
         if (!existe) {
 
             sqlHandler.putFavorites(favorite);
+            fab.setImageResource(R.drawable.ic_favorite_select);
 
         } else {
 
             sqlHandler.deleteFavorite(favorite);
+            fab.setImageResource(R.drawable.ic_favorite_normal);
         }
 
         sqlHandler.closeDDBB();

@@ -10,11 +10,15 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
@@ -32,6 +36,7 @@ import com.example.blancomm.popularmoviesstage2.db.FavoritesDB;
 import com.example.blancomm.popularmoviesstage2.db.SqlHandler;
 import com.example.blancomm.popularmoviesstage2.model.FavoriteInfo;
 import com.example.blancomm.popularmoviesstage2.model.MovieDetailInfo;
+import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage2.model.ReviewsInfo;
 import com.example.blancomm.popularmoviesstage2.model.VideosInfo;
 import com.example.blancomm.popularmoviesstage2.network.VolleyRequest;
@@ -40,6 +45,7 @@ import com.example.blancomm.popularmoviesstage2.utils.Constant;
 import com.example.blancomm.popularmoviesstage2.utils.JSONActions;
 import com.example.blancomm.popularmoviesstage2.utils.URLUtils;
 import com.example.blancomm.popularmoviesstage2.utils.UtilsView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +59,7 @@ import java.util.List;
 public class DetailFragment extends Fragment implements VolleyListeners {
 
     private String mIdMovie;
-    private NetworkImageView mImageDetail, mThumbnail;
+    private ImageView mImageDetail, mThumbnail;
     private TextView mVotes, mRates, mPopulrity, mDate;
     private CollapsingToolbarLayout collapsingToolbar;
     private AppBarLayout mAppBar;
@@ -72,6 +78,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private LayoutInflater inflater;
     private int configDevice;
     private boolean pulsado = false;
+    private int mOriginTab;
 
     public DetailFragment() {
     }
@@ -94,11 +101,13 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
             mIdMovie = savedInstanceState.getString(Constant.ID_MOVIE);
             configDevice = savedInstanceState.getInt(Constant.CONFIG_DEVICE);
+            mOriginTab = savedInstanceState.getInt(Constant.ID_TAB);
 
         } else {
 
             mIdMovie = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
             configDevice = getResources().getConfiguration().orientation;
+            mOriginTab = getActivity().getIntent().getIntExtra(Constant.EXTRA_TAB,0);
         }
 
         beginRequest(mIdMovie);
@@ -123,7 +132,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         instantiateObjects(rootView);
 
-
         return rootView;
     }
 
@@ -141,8 +149,8 @@ public class DetailFragment extends Fragment implements VolleyListeners {
      */
     private void instantiateObjects(View view) {
 
-        mImageDetail = (NetworkImageView) view.findViewById(R.id.image_detail);
-        mThumbnail = (NetworkImageView)view.findViewById(R.id.thumbnail_film2);
+        mImageDetail = (ImageView) view.findViewById(R.id.image_detail);
+        mThumbnail = (ImageView)view.findViewById(R.id.thumbnail_film2);
         mAppBar = (AppBarLayout) view.findViewById(R.id.view);
         mDate = (TextView)view.findViewById(R.id.imdb_id);
         mPopulrity = (TextView)view.findViewById(R.id.popularity);
@@ -227,11 +235,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
     }
 
-    @Override
-    public void onFinishJsonFavoritesRequest(JSONObject jsonObject) {
-
-    }
-
     /**
      * Get data from json videos for a movie id, request on volleyrequest class.
      * @param jsonObject
@@ -248,6 +251,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
     }
 
+    /**
+     * Get data from json reviews for a movie id, request on volleyrequest class.
+     * @param jsonObject
+     */
     @Override
     public void onFinishJsonReviewsRequest(JSONObject jsonObject) {
 
@@ -267,8 +274,11 @@ public class DetailFragment extends Fragment implements VolleyListeners {
      */
     private void injectData(MovieDetailInfo movieDetailInfo) throws JSONException {
 
-        VolleyRequest.requestImage(Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail(), mImageDetail);
-        VolleyRequest.requestImage(Constant.URL_THUMNAIL_IMAGE + "w185/" + movieDetailInfo.getThumnail(), mThumbnail);
+        Picasso.with(getActivity()).load(Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail())
+                .placeholder(R.drawable.ic_image).into(mImageDetail);
+
+        Picasso.with(getActivity()).load(Constant.URL_THUMNAIL_IMAGE + "w185/" + movieDetailInfo.getThumnail())
+                .placeholder(R.drawable.ic_image).into(mThumbnail);
 
         mTitle = movieDetailInfo.getTitle();
         collapsingToolbar.setTitle(mTitle);
@@ -287,6 +297,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         setCountryCard(inflater);
 
         mFlag.setImageResource(UtilsView.setFlagLanguageDetail(movieDetailInfo.getOriginalLanguage()));
+        pulsado = false;
 
         final FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);
         final boolean existe = SqlHandler.checkidExitsorNot(FavoritesDB.TABLE_FAVORITES, FavoritesDB.COLUMN_IDMOVIE, movieDetail.getId());
@@ -295,16 +306,11 @@ public class DetailFragment extends Fragment implements VolleyListeners {
             @Override
             public void onClick(View v) {
 
-                pulsado = !pulsado ? true : false;
-                int isChecked = !pulsado ? 0 : 1;
+                pulsado = !pulsado ? false : true;
 
                 fab.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.expand_button));
-                fab.setImageResource(pulsado ? R.drawable.ic_favorite_select : R.drawable.ic_favorite_normal);
 
-                //Save object in DB when click on favorite button.
-                FavoriteInfo favorite = new FavoriteInfo(movieDetail.getId(), movieDetail.getTitle(), isChecked);
-
-                SqlHandler.saveFavoriteObject(favorite, AppController.getmSqlHandler());
+                SqlHandler.saveFavoriteObject(SqlHandler.saveFavorite(movieDetail), AppController.getmSqlHandler(), fab);
 
             }
         });
@@ -447,7 +453,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         View view = inflater.inflate(R.layout.card_detail_trailers, mMainView, false);
 
         ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.videos));
-        putVideos(videos,(LinearLayout)view.findViewById(R.id.ll_trailers));
+        putVideos(videos, (LinearLayout) view.findViewById(R.id.ll_trailers));
         mMainView.addView(view);
 
     }
@@ -459,7 +465,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.reviews));
         int sizeReview = reviews.size();
         view.findViewById(R.id.tv_empty).setVisibility(sizeReview > 0 ? View.GONE : View.VISIBLE);
-        putReviews(reviews, ((LinearLayout)view.findViewById(R.id.ll_reviews)));
+        putReviews(reviews, ((LinearLayout) view.findViewById(R.id.ll_reviews)));
         mMainView.addView(view);
 
     }
@@ -522,4 +528,42 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
 
     }
+
+    private void shareTextUrl() {
+        Intent share = new Intent(android.content.Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+
+        // Add data to the intent, the receiving app will decide
+        // what to do with it.
+        share.putExtra(Intent.EXTRA_SUBJECT, movieDetail.getTitle());
+        share.putExtra(Intent.EXTRA_TEXT, movieDetail.getHomepage());
+
+        startActivity(Intent.createChooser(share, "Share link!"));
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_detail, menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case R.id.action_share:
+                shareTextUrl();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 }

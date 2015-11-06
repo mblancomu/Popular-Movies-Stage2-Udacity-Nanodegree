@@ -78,4 +78,9 @@ public class Constant {
     public static final String ID_MOVIE = "id";
     public static final String CONFIG_DEVICE = "config";
 
+    //Put Extra for the tab position. This is need for the back button on detail view.
+    public static final String EXTRA_TAB = "tab";
+    public static final String ID_TAB = "id_tab";
+
+
 }

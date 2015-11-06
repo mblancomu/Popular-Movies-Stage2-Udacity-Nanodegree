@@ -56,35 +56,6 @@ public class VolleyRequest {
     }
 
     /**
-     * Request for get all movies from the service.
-     * @param listeners
-     * @param url
-     */
-    public static void requestJsonFavorites(final VolleyListeners listeners, String url) {
-
-        final JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, (String) null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        listeners.onFinishJsonFavoritesRequest(response);
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-
-                    }
-                });
-
-        // Request queue on Application class manager.
-        AppController.getInstance().addToRequestQueue(jsObjRequest, Constant.TAG_JSON);
-
-    }
-
-    /**
      * Request for get only the json from videos. Need the id of movie for get all trailers.
      * @param listeners
      * @param url
