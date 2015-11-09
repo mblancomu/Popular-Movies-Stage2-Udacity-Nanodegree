@@ -10,7 +10,6 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -21,22 +20,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.VolleyListeners;
 import com.example.blancomm.popularmoviesstage2.app.AppController;
 import com.example.blancomm.popularmoviesstage2.db.FavoritesDB;
 import com.example.blancomm.popularmoviesstage2.db.SqlHandler;
-import com.example.blancomm.popularmoviesstage2.model.FavoriteInfo;
 import com.example.blancomm.popularmoviesstage2.model.MovieDetailInfo;
-import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage2.model.ReviewsInfo;
 import com.example.blancomm.popularmoviesstage2.model.VideosInfo;
 import com.example.blancomm.popularmoviesstage2.network.VolleyRequest;
@@ -67,7 +62,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private String mTitle;
     private CardView mCardHeaderCollapse;
     private NestedScrollView mScrollView;
-    private ImageView mIconRate,mIconPopularity, mIconVotes, mIconDate, mFlag;
+    private ImageView mIconRate, mIconPopularity, mIconVotes, mIconDate, mFlag;
     private MovieDetailInfo movieDetail;
     private TableRow mRowAdults;
     private LinearLayout mLinearIcons;
@@ -83,10 +78,11 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     public DetailFragment() {
     }
 
-    public static DetailFragment newInstance(String id) {
+    public static DetailFragment newInstance(String id, int mOriginTab) {
         DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
-        args.putString(Constant.TAG_ID_MOVIE, id);
+        args.putString(Constant.ID_MOVIE, id);
+        args.putInt(Constant.ID_TAB, mOriginTab);
         fragment.setArguments(args);
         return fragment;
     }
@@ -97,7 +93,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         setHasOptionsMenu(true);
         setRetainInstance(true);
 
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
 
             mIdMovie = savedInstanceState.getString(Constant.ID_MOVIE);
             configDevice = savedInstanceState.getInt(Constant.CONFIG_DEVICE);
@@ -105,9 +101,9 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         } else {
 
-            mIdMovie = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
+            mIdMovie = getArguments().getString(Constant.ID_MOVIE);
             configDevice = getResources().getConfiguration().orientation;
-            mOriginTab = getActivity().getIntent().getIntExtra(Constant.EXTRA_TAB,0);
+            mOriginTab = getArguments().getInt(Constant.ID_TAB);
         }
 
         beginRequest(mIdMovie);
@@ -120,7 +116,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         int currentOrientation = getResources().getConfiguration().orientation;
 
-        if (configDevice != currentOrientation){
+        if (configDevice != currentOrientation) {
 
             beginRequest(mIdMovie);
 
@@ -129,6 +125,13 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+
+        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_detail);
+        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.button_onoff_indicator_off);
+
 
         instantiateObjects(rootView);
 
@@ -145,29 +148,30 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     /**
      * TODO: This should change in the future, i have very much objects here. Instantiate all objects in view.
+     *
      * @param view
      */
     private void instantiateObjects(View view) {
 
         mImageDetail = (ImageView) view.findViewById(R.id.image_detail);
-        mThumbnail = (ImageView)view.findViewById(R.id.thumbnail_film2);
+        mThumbnail = (ImageView) view.findViewById(R.id.thumbnail_film2);
         mAppBar = (AppBarLayout) view.findViewById(R.id.view);
-        mDate = (TextView)view.findViewById(R.id.imdb_id);
-        mPopulrity = (TextView)view.findViewById(R.id.popularity);
-        mRates = (TextView)view.findViewById(R.id.hightest_rate);
-        mVotes = (TextView)view.findViewById(R.id.vote_count);
-        mScrollView = (NestedScrollView)view.findViewById(R.id.nested);
-        mIconDate = (ImageView)view.findViewById(R.id.iv_date);
-        mIconVotes= (ImageView)view.findViewById(R.id.iv_votes);
-        mIconPopularity = (ImageView)view.findViewById(R.id.iv_popular);
-        mIconRate = (ImageView)view.findViewById(R.id.iv_rate);
-        mCardHeaderCollapse = (CardView)view.findViewById(R.id.card_header_collapse);
-        mRowAdults = (TableRow)view.findViewById(R.id.tr_adults);
-        mLinearIcons = (LinearLayout)view.findViewById(R.id.ll_icons_header);
-        mFlag = (ImageView)view.findViewById(R.id.iv_flag);
-        mCardGenres = (CardView)view.findViewById(R.id.card_genres);
-        mIconsGenres = (LinearLayout)view.findViewById(R.id.ll_genres);
-        mMainView = (LinearLayout)view.findViewById(R.id.ll_main);
+        mDate = (TextView) view.findViewById(R.id.imdb_id);
+        mPopulrity = (TextView) view.findViewById(R.id.popularity);
+        mRates = (TextView) view.findViewById(R.id.hightest_rate);
+        mVotes = (TextView) view.findViewById(R.id.vote_count);
+        mScrollView = (NestedScrollView) view.findViewById(R.id.nested);
+        mIconDate = (ImageView) view.findViewById(R.id.iv_date);
+        mIconVotes = (ImageView) view.findViewById(R.id.iv_votes);
+        mIconPopularity = (ImageView) view.findViewById(R.id.iv_popular);
+        mIconRate = (ImageView) view.findViewById(R.id.iv_rate);
+        mCardHeaderCollapse = (CardView) view.findViewById(R.id.card_header_collapse);
+        mRowAdults = (TableRow) view.findViewById(R.id.tr_adults);
+        mLinearIcons = (LinearLayout) view.findViewById(R.id.ll_icons_header);
+        mFlag = (ImageView) view.findViewById(R.id.iv_flag);
+        mCardGenres = (CardView) view.findViewById(R.id.card_genres);
+        mIconsGenres = (LinearLayout) view.findViewById(R.id.ll_genres);
+        mMainView = (LinearLayout) view.findViewById(R.id.ll_main);
 
         inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -178,10 +182,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         AnimationsUtilities.fadeInAlphaIcons(getActivity(), mIconPopularity, R.anim.tween_popularity);
         AnimationsUtilities.fadeInAlphaIcons(getActivity(), mIconRate, R.anim.tween_rate);
         AnimationsUtilities.fadeInAlphaIcons(getActivity(), mIconDate, R.anim.tween_imdb);
-
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        ((DetailActivity) getActivity()).setSupportActionBar(toolbar);
-        ((DetailActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         collapsingToolbar = (CollapsingToolbarLayout) view.findViewById(R.id.collapsing_toolbar);
         UtilsView.makeCollapsingToolbarLayoutTypeface(collapsingToolbar, getActivity());
@@ -222,6 +222,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     /**
      * Get the data from json movie request on volleyrequest class.
+     *
      * @param jsonObject
      */
     @Override
@@ -237,6 +238,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     /**
      * Get data from json videos for a movie id, request on volleyrequest class.
+     *
      * @param jsonObject
      */
     @Override
@@ -253,6 +255,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     /**
      * Get data from json reviews for a movie id, request on volleyrequest class.
+     *
      * @param jsonObject
      */
     @Override
@@ -269,6 +272,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     /**
      * Inject data in the instantiate objects in the view.
+     *
      * @param movieDetailInfo
      * @throws JSONException
      */
@@ -308,23 +312,22 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
                 pulsado = !pulsado ? false : true;
 
-                fab.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.expand_button));
+                //fab.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.expand_button));
 
                 SqlHandler.saveFavoriteObject(SqlHandler.saveFavorite(movieDetail), AppController.getmSqlHandler(), fab);
 
             }
         });
 
-        getView().findViewById(R.id.progressbar_detail).setVisibility(View.GONE);
-        getView().findViewById(R.id.back_progress_detail).setVisibility(View.GONE);
 
     }
 
     /**
      * Put icons for genres ids. This insert dinamically a view with imageview and textview.
+     *
      * @param genres
      */
-    private void putIconsGenres(List<String> genres){
+    private void putIconsGenres(List<String> genres) {
 
         int genresSize = genres.size();
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -332,12 +335,12 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         mCardGenres.setVisibility(genresSize > 0 ? View.VISIBLE : View.GONE);
 
-        for (int i = 0; i < genresSize; i++){
+        for (int i = 0; i < genresSize; i++) {
 
             View view = inflater.inflate(R.layout.item_card_genres, mIconsGenres, false);
 
-            ImageView imageView = (ImageView)view.findViewById(R.id.iv_genre);
-            TextView textView = (TextView)view.findViewById(R.id.tv_genre);
+            ImageView imageView = (ImageView) view.findViewById(R.id.iv_genre);
+            TextView textView = (TextView) view.findViewById(R.id.tv_genre);
             textView.setText(genres.get(i).toString().replace(" ", " \n"));
             imageView.setImageResource(UtilsView.setIconGenre(genres.get(i).toString()));
             lp.setMargins(15, 15, 15, 15);
@@ -348,36 +351,36 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
-    private void putReviews(List<ReviewsInfo> reviews, LinearLayout viewReview){
+    private void putReviews(List<ReviewsInfo> reviews, LinearLayout viewReview) {
 
         int genresSize = reviews.size();
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        for (int i = 0; i < genresSize; i++){
+        for (int i = 0; i < genresSize; i++) {
 
             View view = inflater.inflate(R.layout.item_review, mIconsGenres, false);
 
-            ((TextView)view.findViewById(R.id.tv_author)).setText(reviews.get(i).getAuthor());
-            ((TextView)view.findViewById(R.id.tv_comment)).setText(reviews.get(i).getContent());
+            ((TextView) view.findViewById(R.id.tv_author)).setText(reviews.get(i).getAuthor());
+            ((TextView) view.findViewById(R.id.tv_comment)).setText(reviews.get(i).getContent());
             viewReview.addView(view);
 
         }
 
     }
 
-    private void putVideos(final List<VideosInfo> videos, LinearLayout viewReview){
+    private void putVideos(final List<VideosInfo> videos, LinearLayout viewReview) {
 
         int videosSize = videos.size();
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        for (int i = 0; i < videosSize; i++){
+        for (int i = 0; i < videosSize; i++) {
 
             View view = inflater.inflate(R.layout.item_videos, mIconsGenres, false);
             final String key = videos.get(i).getKey();
             String hd = videos.get(i).getSize();
 
-            ((TextView)view.findViewById(R.id.tv_trailer)).setText(videos.get(i).getName());
-            ((ImageView)view.findViewById(R.id.iv_video)).setOnClickListener(new View.OnClickListener() {
+            ((TextView) view.findViewById(R.id.tv_trailer)).setText(videos.get(i).getName());
+            ((ImageView) view.findViewById(R.id.iv_video)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     try {
@@ -387,7 +390,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
                     }
                 }
             });
-            ((ImageView)view.findViewById(R.id.iv_hd)).setVisibility(hd.equals("720") ? View.VISIBLE : View.GONE);
+            ((ImageView) view.findViewById(R.id.iv_hd)).setVisibility(hd.equals("720") ? View.VISIBLE : View.GONE);
             viewReview.addView(view);
 
         }
@@ -396,32 +399,35 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     /**
      * Card view for the synopsis of the moview.
+     *
      * @param inflater
      */
-    private void setSynopsisCard(LayoutInflater inflater){
+    private void setSynopsisCard(LayoutInflater inflater) {
 
         View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
 
-        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.synopsis));
-        ((TextView)view.findViewById(R.id.tv_description)).setText(movieDetail.getDescription());
+        ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.synopsis));
+        ((TextView) view.findViewById(R.id.tv_description)).setText(movieDetail.getDescription());
         mMainView.addView(view);
     }
 
     /**
      * Card view for the runtime of movie.
+     *
      * @param inflater
      */
-    private void setRuntimeCard(LayoutInflater inflater){
+    private void setRuntimeCard(LayoutInflater inflater) {
 
         View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
 
-        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.runtime));
-        ((TextView)view.findViewById(R.id.tv_description)).setText(movieDetail.getRuntime() + "  min");
+        ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.runtime));
+        ((TextView) view.findViewById(R.id.tv_description)).setText(movieDetail.getRuntime() + "  min");
         mMainView.addView(view);
     }
 
     /**
      * Card view for the countries production. Get an array with all countries and insert the text.
+     *
      * @param inflater
      * @throws JSONException
      */
@@ -431,38 +437,39 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         int countriesSize = JSONActions.getCountries(movieDetail.getProduction_countries()).size();
         StringBuilder countries = new StringBuilder(countriesSize);
 
-        for (int i = 0; i < countriesSize;i++){
+        for (int i = 0; i < countriesSize; i++) {
 
-            countries.append(i == countriesSize-1 ? "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() :
+            countries.append(i == countriesSize - 1 ? "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() :
                     "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() + " \n");
 
         }
 
-        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.country));
-        ((TextView)view.findViewById(R.id.tv_description)).setText(countries.toString());
+        ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.country));
+        ((TextView) view.findViewById(R.id.tv_description)).setText(countries.toString());
         mMainView.addView(view);
 
     }
 
     /**
      * TODO: Sure, i put here the trailers, now non implementing. Card view for the videos of this movie. This contain the trailers.
+     *
      * @param inflater
      */
-    private void setVideosCard(LayoutInflater inflater){
+    private void setVideosCard(LayoutInflater inflater) {
 
         View view = inflater.inflate(R.layout.card_detail_trailers, mMainView, false);
 
-        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.videos));
+        ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.videos));
         putVideos(videos, (LinearLayout) view.findViewById(R.id.ll_trailers));
         mMainView.addView(view);
 
     }
 
-    private void setReviewsCard(LayoutInflater inflater){
+    private void setReviewsCard(LayoutInflater inflater) {
 
         View view = inflater.inflate(R.layout.card_detail_reviews, mMainView, false);
 
-        ((TextView)view.findViewById(R.id.tv_title)).setText(getString(R.string.reviews));
+        ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.reviews));
         int sizeReview = reviews.size();
         view.findViewById(R.id.tv_empty).setVisibility(sizeReview > 0 ? View.GONE : View.VISIBLE);
         putReviews(reviews, ((LinearLayout) view.findViewById(R.id.ll_reviews)));
@@ -481,26 +488,28 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     /**
      * Show a link in function the selected view.
+     *
      * @param v
      */
-    public void showLink(View v){
-            switch(v.getId()) {
-                case R.id.iv_website:
-                    launchLink(movieDetail.getHomepage());
-                    break;
-                case R.id.iv_imdb:
-                    launchLink(Constant.URL_IMDB + movieDetail.getImdb_id());
-                    break;
-                default:
-                    break;
-            }
+    public void showLink(View v) {
+        switch (v.getId()) {
+            case R.id.iv_website:
+                launchLink(movieDetail.getHomepage());
+                break;
+            case R.id.iv_imdb:
+                launchLink(Constant.URL_IMDB + movieDetail.getImdb_id());
+                break;
+            default:
+                break;
+        }
     }
 
     /**
      * Intent for launch a url on navigatore.
+     *
      * @param url
      */
-    private void launchLink(String url){
+    private void launchLink(String url) {
 
         if (!url.startsWith("http://") && !url.startsWith("https://"))
             url = "http://" + url;
@@ -511,7 +520,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
-    private void beginRequest(String id){
+    private void beginRequest(String id) {
 
         try {
 
@@ -560,6 +569,9 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         switch (id) {
             case R.id.action_share:
                 shareTextUrl();
+                return true;
+            case android.R.id.home:
+                getActivity().onBackPressed();
                 return true;
         }
 

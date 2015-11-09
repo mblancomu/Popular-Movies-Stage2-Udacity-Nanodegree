@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.example.blancomm.popularmoviesstage2.ui.FavoritesFragment;
+import com.example.blancomm.popularmoviesstage2.ui.GridFragment;
 import com.example.blancomm.popularmoviesstage2.ui.MainFragment;
 
 
@@ -21,16 +22,16 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
         Fragment fragment = null;
         switch (position){
             case 0:
-                fragment =  MainFragment.newInstance(position);
+                fragment =  GridFragment.newInstance(position);
                 break;
             case 1:
-                fragment =  MainFragment.newInstance(position);
+                fragment =  GridFragment.newInstance(position);
                 break;
             case 2:
                 fragment =  FavoritesFragment.newInstance(position);
                 break;
             default:
-                fragment =  MainFragment.newInstance(position);
+                fragment =  GridFragment.newInstance(position);
                 break;
 
         }

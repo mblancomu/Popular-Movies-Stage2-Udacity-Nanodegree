@@ -1,63 +1,37 @@
 package com.example.blancomm.popularmoviesstage2.ui;
 
-import android.app.ProgressDialog;
-import android.content.res.Configuration;
+import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.blancomm.popularmoviesstage2.R;
-import com.example.blancomm.popularmoviesstage2.VolleyListeners;
-import com.example.blancomm.popularmoviesstage2.adapters.EndlessRecyclerOnScrollListener;
-import com.example.blancomm.popularmoviesstage2.adapters.MainRecyclerAdapter;
-import com.example.blancomm.popularmoviesstage2.db.SqlHandler;
-import com.example.blancomm.popularmoviesstage2.model.FavoriteInfo;
-import com.example.blancomm.popularmoviesstage2.model.MovieDetailInfo;
-import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
-import com.example.blancomm.popularmoviesstage2.network.VolleyRequest;
-import com.example.blancomm.popularmoviesstage2.utils.ConfigDevice;
+import com.example.blancomm.popularmoviesstage2.adapters.MainPagerAdapter;
 import com.example.blancomm.popularmoviesstage2.utils.Constant;
-import com.example.blancomm.popularmoviesstage2.utils.JSONActions;
-import com.example.blancomm.popularmoviesstage2.utils.TransparentProgressDialog;
-import com.example.blancomm.popularmoviesstage2.utils.URLUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+public class MainFragment extends Fragment {
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-public class MainFragment extends Fragment implements VolleyListeners {
-
-    private static final String TAB_POSITION = "tab_position";
     private static final String TAG = MainFragment.class.getSimpleName();
-    private List<MoviesInfo> mMovies;
-    private MainRecyclerAdapter mAdapter;
-    private GridLayoutManager mLayoutManager;
-    private int mPosition;
-    private int current_page = 1;
     private int configDevice;
-    private RecyclerView recyclerView;
-    private TextView mEmpty;
+    private DrawerLayout mDrawerLayout;
 
     public MainFragment() {
     }
 
-    public static MainFragment newInstance(int tabPosition) {
+    public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
-        Bundle args = new Bundle();
-        args.putInt(TAB_POSITION, tabPosition);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -67,9 +41,7 @@ public class MainFragment extends Fragment implements VolleyListeners {
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
-        mPosition =  getArguments().getInt(TAB_POSITION);
-
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
 
             configDevice = savedInstanceState.getInt(Constant.CONFIG_DEVICE);
         } else {
@@ -86,70 +58,41 @@ public class MainFragment extends Fragment implements VolleyListeners {
 
     }
 
-    /**
-     * Depending of the tab, the url composite is different.
-     * @param position
-     * @return
-     * @throws UnsupportedEncodingException
-     */
-    private String setURLFromPosition(int position) throws UnsupportedEncodingException {
-
-        String url = "";
-
-        switch (position){
-            case 0:
-                url =  URLUtils.getURLPopularity(current_page);
-                break;
-            case 1:
-                url =  URLUtils.getURLRate(current_page);
-                break;
-            default:
-                url =  URLUtils.getURLPopularity(current_page);
-                break;
-        }
-
-        return url;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v =  inflater.inflate(R.layout.fragment_main, container, false);
+        View v = inflater.inflate(R.layout.fragment_main, container, false);
 
         int currentOrientation = getResources().getConfiguration().orientation;
 
-        if (configDevice != currentOrientation){
-
-           beginRequest(mPosition);
+        if (configDevice != currentOrientation) {
             configDevice = currentOrientation;
 
         }
+     Toolbar toolbar = (Toolbar)v.findViewById(R.id.toolbar);
+        ((MainActivity)getActivity()).setSupportActionBar(toolbar);
+        ActionBar actionBar =  ((MainActivity)getActivity()).getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        mMovies = new ArrayList<MoviesInfo>();
-        mAdapter = new MainRecyclerAdapter(mMovies, getActivity(), mPosition);
+        MainPagerAdapter adapter = new MainPagerAdapter(getActivity().getSupportFragmentManager());
+        ViewPager viewPager = (ViewPager) v.findViewById(R.id.viewpager);
+        viewPager.setAdapter(adapter);
+        TabLayout tabLayout = (TabLayout) v.findViewById(R.id.tablayout);
+        tabLayout.setupWithViewPager(viewPager);
 
-        mLayoutManager = new GridLayoutManager(getActivity(), ConfigDevice.getNumberColumnsGrid(getActivity()));
-        mEmpty = (TextView)v.findViewById(R.id.no_movies);
+        mDrawerLayout = (DrawerLayout) v.findViewById(R.id.drawer_layout);
 
-        recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(mLayoutManager) {
+        NavigationView navigationView = (NavigationView) v.findViewById(R.id.navigation_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onLoadMore(int current_page) {
-
-                try {
-                    loadMoreData(current_page);
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                menuItem.setChecked(true);
+                mDrawerLayout.closeDrawers();
+                Toast.makeText(getActivity(), menuItem.getTitle(), Toast.LENGTH_LONG).show();
+                return true;
             }
-
         });
-
-        beginRequest(mPosition);
 
         return v;
     }
@@ -160,77 +103,28 @@ public class MainFragment extends Fragment implements VolleyListeners {
 
     }
 
-    /**
-     * Get data from the request on volleyrequest for all movies.
-     * @param jsonObject
-     */
     @Override
-    public void onFinishJsonMoviesRequest(JSONObject jsonObject) {
-
-        try {
-            mMovies = JSONActions.parse(jsonObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if (mMovies != null){
-
-            mAdapter.updateResults(mMovies, getActivity());
-            recyclerView.setVisibility(View.VISIBLE);
-
-        } else {
-
-           mEmpty.setVisibility(mMovies.size() > 0 ? View.GONE : View.VISIBLE);
-            recyclerView.setVisibility(View.GONE);
-        }
-
-        getActivity().findViewById(R.id.back_progress).setVisibility(View.GONE);
-        getActivity().findViewById(R.id.progressbar).setVisibility(View.GONE);
-    }
-
-    /**
-     * Interface. Dont used here, only in detail view.
-     * @param jsonObject
-     */
-    @Override
-    public void onFinishJsonVideosRequest(JSONObject jsonObject) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main, menu);
 
     }
 
     @Override
-    public void onFinishJsonReviewsRequest(JSONObject jsonObject) {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-    }
-
-    /**
-     * Update the grid view with differents pages when the user do scroll.
-     * @param current_page
-     * @throws UnsupportedEncodingException
-     */
-    private void loadMoreData(int current_page) throws UnsupportedEncodingException {
-
-        current_page++;
-
-        VolleyRequest.requestJsonMovies(this, URLUtils.getURLPopularity(current_page));
-
-        mAdapter.notifyDataSetChanged();
-
-    }
-
-    /**
-     * Init request for every tab, less the favorites tabs.
-     * @param position
-     */
-    private void beginRequest(int position){
-
-        try {
-
-            VolleyRequest.requestJsonMovies(this, setURLFromPosition(position));
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
         }
-    }
 
+        return super.onOptionsItemSelected(item);
+    }
 
 }

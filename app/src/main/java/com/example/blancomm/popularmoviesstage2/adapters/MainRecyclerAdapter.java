@@ -2,6 +2,7 @@ package com.example.blancomm.popularmoviesstage2.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.model.MoviesInfo;
 import com.example.blancomm.popularmoviesstage2.ui.DetailActivity;
+import com.example.blancomm.popularmoviesstage2.ui.DetailFragment;
+import com.example.blancomm.popularmoviesstage2.ui.MainActivity;
 import com.example.blancomm.popularmoviesstage2.utils.Constant;
 import com.example.blancomm.popularmoviesstage2.utils.UtilsView;
 import com.squareup.picasso.Picasso;
@@ -76,11 +79,25 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
             @Override
             public void onClick(View view) {
 
-                Context context = view.getContext();
-                Intent intent = new Intent(context, DetailActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT, item.getId());
-                intent.putExtra(Constant.EXTRA_TAB, mPositionTab);
-                context.startActivity(intent);
+                boolean tabletSize = mContext.getResources().getBoolean(R.bool.isTablet);
+                if (tabletSize) {
+
+                    DetailFragment newDetailFragment = DetailFragment.newInstance(item.getId(),mPositionTab);
+
+                    FragmentTransaction fragmentTransaction = ((MainActivity) mContext).getSupportFragmentManager()
+                            .beginTransaction();
+
+                    fragmentTransaction.add(android.R.id.content, newDetailFragment);
+                    fragmentTransaction.addToBackStack("");
+                    fragmentTransaction.commit();
+                } else {
+
+                    Context context = view.getContext();
+                    Intent intent = new Intent(context, DetailActivity.class);
+                    intent.putExtra(Intent.EXTRA_TEXT, item.getId());
+                    intent.putExtra(Constant.EXTRA_TAB, mPositionTab);
+                    context.startActivity(intent);
+                }
             }
         });
 
