@@ -39,7 +39,14 @@ public class MainFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        setHasOptionsMenu(true);
+
+        boolean tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
+
+        if (!tabletSize) {
+            setHasOptionsMenu(true);
+        }else {
+            setHasOptionsMenu(false);
+        }
 
         if (savedInstanceState != null) {
 
@@ -69,11 +76,17 @@ public class MainFragment extends Fragment {
             configDevice = currentOrientation;
 
         }
-     Toolbar toolbar = (Toolbar)v.findViewById(R.id.toolbar);
-        ((MainActivity)getActivity()).setSupportActionBar(toolbar);
-        ActionBar actionBar =  ((MainActivity)getActivity()).getSupportActionBar();
-        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        boolean tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
+
+        if (!tabletSize) {
+            Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+            ((MainActivity) getActivity()).setSupportActionBar(toolbar);
+            ActionBar actionBar = ((MainActivity) getActivity()).getSupportActionBar();
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+
+        }
 
         MainPagerAdapter adapter = new MainPagerAdapter(getActivity().getSupportFragmentManager());
         ViewPager viewPager = (ViewPager) v.findViewById(R.id.viewpager);

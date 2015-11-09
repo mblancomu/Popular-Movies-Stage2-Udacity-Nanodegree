@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-
                 MainFragment mainFragment = MainFragment.newInstance();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.container_fragment, mainFragment)

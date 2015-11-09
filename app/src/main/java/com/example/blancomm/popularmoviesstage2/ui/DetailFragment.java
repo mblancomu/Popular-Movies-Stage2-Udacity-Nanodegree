@@ -20,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -74,6 +75,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private int configDevice;
     private boolean pulsado = false;
     private int mOriginTab;
+    private boolean tabletSize;
 
     public DetailFragment() {
     }
@@ -90,8 +92,15 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
         setRetainInstance(true);
+
+         tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
+
+        if (!tabletSize) {
+            setHasOptionsMenu(true);
+        }else {
+            setHasOptionsMenu(false);
+        }
 
         if (savedInstanceState != null) {
 
@@ -101,9 +110,20 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         } else {
 
-            mIdMovie = getArguments().getString(Constant.ID_MOVIE);
-            configDevice = getResources().getConfiguration().orientation;
-            mOriginTab = getArguments().getInt(Constant.ID_TAB);
+
+            if (tabletSize) {
+
+                mIdMovie = getArguments().getString(Constant.ID_MOVIE);
+                configDevice = getResources().getConfiguration().orientation;
+                mOriginTab = getArguments().getInt(Constant.ID_TAB);
+
+            } else {
+
+                mIdMovie = getActivity().getIntent().getStringExtra(Intent.EXTRA_TEXT);
+                configDevice = getResources().getConfiguration().orientation;
+                mOriginTab = getActivity().getIntent().getIntExtra(Constant.EXTRA_TAB, 0);
+
+            }
         }
 
         beginRequest(mIdMovie);
@@ -126,12 +146,11 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
-
-        Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_detail);
-        ((MainActivity) getActivity()).setSupportActionBar(toolbar);
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ((MainActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(android.R.drawable.button_onoff_indicator_off);
-
+        if (!tabletSize) {
+            Toolbar toolbar = (Toolbar) rootView.findViewById(R.id.toolbar_detail);
+            ((DetailActivity) getActivity()).setSupportActionBar(toolbar);
+            ((DetailActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         instantiateObjects(rootView);
 
@@ -312,7 +331,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
                 pulsado = !pulsado ? false : true;
 
-                //fab.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.expand_button));
+                fab.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.expand_button));
 
                 SqlHandler.saveFavoriteObject(SqlHandler.saveFavorite(movieDetail), AppController.getmSqlHandler(), fab);
 

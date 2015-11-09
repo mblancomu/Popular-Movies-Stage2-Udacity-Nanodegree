@@ -45,6 +45,7 @@ public class GridFragment extends Fragment implements VolleyListeners {
     private int configDevice;
     private RecyclerView recyclerView;
     private TextView mEmpty;
+    private boolean tabletSize;
 
     public static GridFragment newInstance(int tabPosition) {
         GridFragment fragment = new GridFragment();
@@ -60,6 +61,7 @@ public class GridFragment extends Fragment implements VolleyListeners {
         setRetainInstance(true);
 
         mPosition =  getArguments().getInt(TAB_POSITION);
+        tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
 
         if (savedInstanceState != null){
 
@@ -119,8 +121,15 @@ public class GridFragment extends Fragment implements VolleyListeners {
 
         mMovies = new ArrayList<MoviesInfo>();
         mAdapter = new MainRecyclerAdapter(mMovies, getActivity(), mPosition);
+        int numberColumns;
 
-        mLayoutManager = new GridLayoutManager(getActivity(), ConfigDevice.getNumberColumnsGrid(getActivity()));
+        if (tabletSize){
+
+            numberColumns = 1;
+        }else {
+            numberColumns = ConfigDevice.getNumberColumnsGrid(getActivity());
+        }
+        mLayoutManager = new GridLayoutManager(getActivity(),numberColumns);
         mEmpty = (TextView)v.findViewById(R.id.no_movies);
 
         recyclerView = (RecyclerView)v.findViewById(R.id.recyclerview);
@@ -169,6 +178,16 @@ public class GridFragment extends Fragment implements VolleyListeners {
 
             mAdapter.updateResults(mMovies, getActivity());
             recyclerView.setVisibility(View.VISIBLE);
+
+            boolean tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
+
+            if (tabletSize) {
+
+                DetailFragment detailFragment = DetailFragment.newInstance(mMovies.get(0).getId(),0);
+                ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_placeholder, detailFragment)
+                        .commit();
+            }
 
         } else {
 

@@ -87,9 +87,9 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
                     FragmentTransaction fragmentTransaction = ((MainActivity) mContext).getSupportFragmentManager()
                             .beginTransaction();
 
-                    fragmentTransaction.add(android.R.id.content, newDetailFragment);
-                    fragmentTransaction.addToBackStack("");
+                    fragmentTransaction.replace(R.id.fragment_placeholder, newDetailFragment);
                     fragmentTransaction.commit();
+
                 } else {
 
                     Context context = view.getContext();

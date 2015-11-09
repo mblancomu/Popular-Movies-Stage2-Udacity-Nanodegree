@@ -11,12 +11,10 @@
             android:name="com.example.blancomm.popularmoviesstage2.ui.MainFragment"
             android:id="@+id/main_fragment"
             android:layout_weight="1"/>
-<!--
-        <fragment
+
+        <FrameLayout android:id="@+id/fragment_placeholder"
+            android:layout_weight="2"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:name="com.example.blancomm.popularmoviesstage2.ui.DetailFragment"
-            android:id="@+id/detail_fragment"
-            android:layout_weight="2" />-->
+            android:layout_height="match_parent" />
 
     </LinearLayout>
