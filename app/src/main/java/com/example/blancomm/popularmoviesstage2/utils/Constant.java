@@ -39,7 +39,7 @@ public class Constant {
     public static final String QUERY_PARAM_V = "v";
 
     //Param API KEY. Is a personal value.
-    public static final String PARAM_API_KEY = "*******";
+    public static final String PARAM_API_KEY = "++++++++++++";
 
     //Queries values for any param in url and field on JSONObject Detail
     public static final String PARAM_ADULT = "adult";
@@ -77,6 +77,8 @@ public class Constant {
     //Params for begin the request in main and detail fragment
     public static final String ID_MOVIE = "id";
     public static final String CONFIG_DEVICE = "config";
+    public static final String INIT_DETAIL = "init_detail";
+
 
     //Put Extra for the tab position. This is need for the back button on detail view.
     public static final String EXTRA_TAB = "tab";

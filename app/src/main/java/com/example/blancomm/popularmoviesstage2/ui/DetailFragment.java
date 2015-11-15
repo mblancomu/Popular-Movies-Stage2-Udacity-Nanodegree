@@ -92,14 +92,16 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+        //setRetainInstance(true);
 
          tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
 
         if (!tabletSize) {
             setHasOptionsMenu(true);
+            setRetainInstance(false);
         }else {
             setHasOptionsMenu(false);
+            setRetainInstance(true);
         }
 
         if (savedInstanceState != null) {
@@ -221,18 +223,27 @@ public class DetailFragment extends Fragment implements VolleyListeners {
                     //Collapse
                     mScrollView.animate().translationY(getResources().getInteger(R.integer.translation_card_header)).setInterpolator(new DecelerateInterpolator(2));
                     mCardHeaderCollapse.setCardBackgroundColor(getResources().getColor(R.color.white));
+
+                    if (!tabletSize) {
                     layoutParams.setMargins(0, 0, 0, 0);
                     mLinearIcons.setLayoutParams(layoutParams);
-                    mRowAdults.setVisibility(movieDetail.getAdult().equals("true") ? View.VISIBLE : View.GONE);
+                    }
+
+                   /* if (movieDetail.getAdult().toString() != null) {
+                        mRowAdults.setVisibility(movieDetail.getAdult().equals("true") ? View.VISIBLE : View.GONE);
+                    }*/
 
                 } else if (i == 0) {
 
                     //Expanded
                     mScrollView.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
                     mCardHeaderCollapse.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
-                    layoutParams.setMargins(0, getResources().getInteger(R.integer.margin_top_card_header), 0, 0);
-                    mLinearIcons.setLayoutParams(layoutParams);
-                    mRowAdults.setVisibility(View.GONE);
+
+                    if (!tabletSize) {
+                        layoutParams.setMargins(0, getResources().getInteger(R.integer.margin_top_card_header), 0, 0);
+                        mLinearIcons.setLayoutParams(layoutParams);
+                    }
+                    //mRowAdults.setVisibility(View.GONE);
 
                 }
             }
@@ -349,6 +360,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private void putIconsGenres(List<String> genres) {
 
         int genresSize = genres.size();
+        mIconsGenres.removeAllViews();
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -373,6 +385,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private void putReviews(List<ReviewsInfo> reviews, LinearLayout viewReview) {
 
         int genresSize = reviews.size();
+        viewReview.removeAllViews();
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (int i = 0; i < genresSize; i++) {
@@ -390,6 +403,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private void putVideos(final List<VideosInfo> videos, LinearLayout viewReview) {
 
         int videosSize = videos.size();
+        viewReview.removeAllViews();
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (int i = 0; i < videosSize; i++) {
@@ -557,7 +571,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
-    private void shareTextUrl() {
+    public void shareTextUrl() {
         Intent share = new Intent(android.content.Intent.ACTION_SEND);
         share.setType("text/plain");
         share.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);

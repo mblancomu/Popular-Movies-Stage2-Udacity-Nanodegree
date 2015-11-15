@@ -6,33 +6,33 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!--Text size on Thumbnail grid-->
-    <dimen name="title_thumbnail">9sp</dimen>
-    <dimen name="votes_thumbnail">6sp</dimen>
+    <dimen name="title_thumbnail">16sp</dimen>
+    <dimen name="votes_thumbnail">14sp</dimen>
 
     <!--Text size on Detail screen-->
-    <dimen name="title_detail">14sp</dimen>
-    <dimen name="title_synopsis">14sp</dimen>
-    <dimen name="text_description">10sp</dimen>
+    <dimen name="title_detail">18sp</dimen>
+    <dimen name="title_synopsis">18sp</dimen>
+    <dimen name="text_description">16sp</dimen>
 
     <!--Text for the icons on header collapse detail-->
-    <dimen name="icon_detail_text">11sp</dimen>
+    <dimen name="icon_detail_text">18sp</dimen>
 
-    <dimen name="margin_top_card_header">-35dp</dimen>
+    <dimen name="margin_top_card_header">-25dp</dimen>
     <dimen name="margin_icons_genres">6dp</dimen>
 
-    <dimen name="app_layoutbar_height">250dp</dimen>
+    <dimen name="app_layoutbar_height">400dp</dimen>
     <dimen name="margin_gral_cards">2dp</dimen>
     <dimen name="margin_fab">8dp</dimen>
     <dimen name="size_icon_flag_grid">16dp</dimen>
 
     <!--ImageView size for differents device-->
-    <dimen name="imagegrid_width">180dp</dimen>
-    <dimen name="imagegrid_height">260dp</dimen>
+    <dimen name="imagegrid_width">240dp</dimen>
+    <dimen name="imagegrid_height">450dp</dimen>
 
     <!--Thumbnail size-->
     <dimen name="thumb_detail_width">180dp</dimen>
     <dimen name="thumb_detail_height">270dp</dimen>
 
     <!--Header Collapsing View Detail-->
-    <dimen name="margin_top_header_detail">25dp</dimen>
+    <dimen name="margin_top_header_detail">28dp</dimen>
 </resources>

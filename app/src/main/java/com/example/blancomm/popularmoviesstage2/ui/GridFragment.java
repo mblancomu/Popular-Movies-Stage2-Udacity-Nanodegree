@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,6 +47,7 @@ public class GridFragment extends Fragment implements VolleyListeners {
     private RecyclerView recyclerView;
     private TextView mEmpty;
     private boolean tabletSize;
+    private boolean rotation;
 
     public static GridFragment newInstance(int tabPosition) {
         GridFragment fragment = new GridFragment();
@@ -64,10 +66,15 @@ public class GridFragment extends Fragment implements VolleyListeners {
         tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
 
         if (savedInstanceState != null){
+            rotation = true;
 
             configDevice = savedInstanceState.getInt(Constant.CONFIG_DEVICE);
+            rotation = savedInstanceState.getBoolean(Constant.INIT_DETAIL);
+
         } else {
+
             configDevice = getResources().getConfiguration().orientation;
+            rotation = false;
         }
 
     }
@@ -77,6 +84,7 @@ public class GridFragment extends Fragment implements VolleyListeners {
         super.onSaveInstanceState(outState);
 
         outState.putInt(Constant.CONFIG_DEVICE, configDevice);
+        outState.putBoolean(Constant.INIT_DETAIL,rotation);
 
     }
 
@@ -181,12 +189,16 @@ public class GridFragment extends Fragment implements VolleyListeners {
 
             boolean tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
 
-            if (tabletSize) {
+            Log.e(TAG, "Rotacion: " + rotation);
+
+            if (tabletSize && mPosition == 0 && !rotation) {
 
                 DetailFragment detailFragment = DetailFragment.newInstance(mMovies.get(0).getId(),0);
                 ((MainActivity)getActivity()).getSupportFragmentManager().beginTransaction()
                         .add(R.id.fragment_placeholder, detailFragment)
                         .commit();
+
+                rotation = true;
             }
 
         } else {

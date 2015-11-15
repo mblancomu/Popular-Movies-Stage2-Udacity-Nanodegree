@@ -9,4 +9,5 @@
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="black_trans">#BB000000</color>
+    <color name="header_detail">#AA3F51B5</color>
 </resources>

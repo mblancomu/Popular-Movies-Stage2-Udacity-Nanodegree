@@ -10,5 +10,5 @@
     <integer name="translation_card_header">35</integer>
 
     <integer name="list_fragment_weight">2</integer>
-    <integer name="detail_fragment_weight">3</integer>
+    <integer name="detail_fragment_weight">4</integer>
 </resources>

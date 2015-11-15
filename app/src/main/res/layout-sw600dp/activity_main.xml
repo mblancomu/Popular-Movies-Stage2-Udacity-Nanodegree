@@ -1,20 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    android:id="@+id/drawer_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:baselineAligned="false">
+        android:orientation="vertical">
 
-        <fragment
-            android:layout_width="0dp"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_main"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="com.example.blancomm.popularmoviesstage2.ui.MainFragment"
-            android:id="@+id/main_fragment"
-            android:layout_weight="2"/>
+            android:baselineAligned="false">
 
-        <FrameLayout android:id="@+id/fragment_placeholder"
-            android:layout_weight="3"
-            android:layout_width="0dp"
-            android:layout_height="match_parent" />
+            <fragment
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:name="com.example.blancomm.popularmoviesstage2.ui.MainFragment"
+                android:id="@+id/main_fragment"
+                android:layout_weight="@integer/list_fragment_weight"/>
+
+            <FrameLayout android:id="@+id/fragment_placeholder"
+                android:layout_weight="@integer/detail_fragment_weight"
+                android:layout_width="0dp"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:headerLayout="@layout/drawer_header"
+        app:menu="@menu/drawer"/>
+</android.support.v4.widget.DrawerLayout>
+
+
