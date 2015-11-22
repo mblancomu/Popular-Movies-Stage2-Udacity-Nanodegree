@@ -9,7 +9,7 @@
     <string name="nav_sub_menu">Sub Menu</string>
     <string name="nav_sub_menu_item01">Sub Menu Item 1</string>
     <string name="nav_sub_menu_item02">Sub Menu Item 2</string>
-    <string name="drawer_header_text">Drawer Header</string>
+    <string name="drawer_header_text">Popular Movies</string>
     <string name="second_activity_text"></string>
     <string name="title_activity_detail"></string>
 
@@ -37,5 +37,32 @@
 
     <!--Favorites list-->
     <string name="empty_favorites">No favorites added</string>
+
+    <!--Tabs names-->
+    <string name="tab_popular">MOST POPULAR</string>
+    <string name="tab_rated">HIGHEST RATED</string>
+    <string name="tab_favorites">FAVORITES</string>
+
+    <!--Title genres for translate-->
+    <string name="gen_science_fict">Science Fiction</string>
+    <string name="gen_action">Action</string>
+    <string name="gen_adventure">Adventure</string>
+    <string name="gen_animation">Animation</string>
+    <string name="gen_comedy">Comedy</string>
+    <string name="gen_crime">Crime</string>
+    <string name="gen_documentary">Documentary</string>
+    <string name="gen_drama">Drama</string>
+    <string name="gen_family">Family</string>
+    <string name="gen_fantasy">Fantasy</string>
+    <string name="gen_foreign">Foreign</string>
+    <string name="gen_history">History</string>
+    <string name="gen_horror">Horror</string>
+    <string name="gen_music">Music</string>
+    <string name="gen_mistery">Mystery</string>
+    <string name="gen_romance">Romance</string>
+    <string name="gen_tv">TV Movie</string>
+    <string name="gen_thriller">Thriller</string>
+    <string name="gen_war">War</string>
+    <string name="gen_western">Western</string>
 
 </resources>

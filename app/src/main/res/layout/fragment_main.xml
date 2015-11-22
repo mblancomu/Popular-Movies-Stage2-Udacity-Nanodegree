@@ -16,11 +16,12 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
             <android.support.design.widget.TabLayout
+                style="@style/MyCustomTabLayout"
                 android:id="@+id/tablayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="?attr/colorPrimary"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:theme="@style/MyCustomTabLayout"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:tabGravity="fill"/>
 

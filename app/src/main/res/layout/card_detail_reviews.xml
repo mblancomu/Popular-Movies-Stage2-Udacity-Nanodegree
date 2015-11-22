@@ -17,7 +17,9 @@
             android:layout_height="wrap_content"
             android:textColor="@android:color/white"
             android:background="@color/header_detail"
-            android:padding="8dp"
+            android:paddingLeft="12dp"
+            android:paddingBottom="6dp"
+            android:paddingTop="6dp"
             android:layout_marginBottom="8dp"
             android:textSize="@dimen/title_synopsis" />
 

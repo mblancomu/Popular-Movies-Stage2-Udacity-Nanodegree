@@ -29,11 +29,14 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
     private Context mContext;
     private String TAG = MainRecyclerAdapter.class.getSimpleName();
     private int mPositionTab;
+    private int posSelected = 0;
+    private PositionListener mListener;
 
-    public MainRecyclerAdapter(List<MoviesInfo> items, Context context, int positionTab) {
+    public MainRecyclerAdapter(List<MoviesInfo> items, Context context, int positionTab, PositionListener listener) {
         mItems = items;
         mContext = context;
         mPositionTab = positionTab;
+        mListener = listener;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(final ViewHolder viewHolder, final int i) {
         final MoviesInfo item = mItems.get(i);
 
         String thumbnail = item.getThumnail();
@@ -53,14 +56,18 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         String urlImage = Constant.URL_THUMNAIL_IMAGE + mContext.getString(R.string.width_image_thumb)+ thumbnail;
 
         if (!thumbnail.equals("null")) {
-            //VolleyRequest.requestImage(urlImage, viewHolder.mThumbnail);
+
             Picasso.with(mContext).load(urlImage).placeholder(R.drawable.ic_image).into(viewHolder.mThumbnail);
         }
 
         float rating = Float.parseFloat(item.getVoteAverage())/2;
+        boolean tabletSize = mContext.getResources().getBoolean(R.bool.isTablet);
 
-        if (rating >= 4.0){
+        if (tabletSize && posSelected == i){
             viewHolder.mCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.colorBackgroundCardViewHightest));
+        } else {
+
+            viewHolder.mCard.setCardBackgroundColor(mContext.getResources().getColor(R.color.white));
         }
 
         if (item.getReleaseDate().length() >= 4) {
@@ -81,6 +88,8 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
 
                 boolean tabletSize = mContext.getResources().getBoolean(R.bool.isTablet);
                 if (tabletSize) {
+
+                    mListener.onSelecteditem(i);
 
                     DetailFragment newDetailFragment = DetailFragment.newInstance(item.getId(),mPositionTab);
 
@@ -131,6 +140,11 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
         this.mItems = results;
         this.mContext = context;
         //Triggers the list update
+        notifyDataSetChanged();
+    }
+
+    public void updateSelectItem(int position){
+        this.posSelected = position;
         notifyDataSetChanged();
     }
 

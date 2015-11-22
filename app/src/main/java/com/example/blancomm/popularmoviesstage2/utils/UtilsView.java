@@ -138,4 +138,77 @@ public class UtilsView {
 
         return icon;
     }
+
+    public static String setTitleGenre(String genre, Context context){
+
+        String title = "";
+
+        switch (genre){
+            case "Science Fiction":
+                title = context.getString(R.string.gen_science_fict);
+                break;
+            case "Action":
+                title = context.getString(R.string.gen_action);
+                break;
+            case "Adventure":
+                title = context.getString(R.string.gen_adventure);
+                break;
+            case "Animation":
+                title = context.getString(R.string.gen_animation);
+                break;
+            case "Comedy":
+                title = context.getString(R.string.gen_comedy);
+                break;
+            case "Crime":
+                title = context.getString(R.string.gen_crime);
+                break;
+            case "Documentary":
+                title = context.getString(R.string.gen_documentary);
+                break;
+            case "Drama":
+                title = context.getString(R.string.gen_drama);
+                break;
+            case "Family":
+                title = context.getString(R.string.gen_family);
+                break;
+            case "Fantasy":
+                title = context.getString(R.string.gen_fantasy);
+                break;
+            case "Foreign":
+                title = context.getString(R.string.gen_foreign);
+                break;
+            case "History":
+                title = context.getString(R.string.gen_history);
+                break;
+            case "Horror":
+                title = context.getString(R.string.gen_horror);
+                break;
+            case "Music":
+                title = context.getString(R.string.gen_music);
+                break;
+            case "Mystery":
+                title = context.getString(R.string.gen_mistery);
+                break;
+            case "Romance":
+                title = context.getString(R.string.gen_romance);
+                break;
+            case "TV Movie":
+                title = context.getString(R.string.gen_tv);
+                break;
+            case "Thriller":
+                title = context.getString(R.string.gen_thriller);
+                break;
+            case "War":
+                title = context.getString(R.string.gen_war);
+                break;
+            case "Western":
+                title = context.getString(R.string.gen_western);
+                break;
+            default:
+                title = context.getString(R.string.gen_comedy);
+                break;
+        }
+
+        return title;
+    }
 }

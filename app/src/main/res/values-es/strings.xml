@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="action_share">Compartir</string>
+
+    <string name="nav_item_attachment">Peliculas</string>
+    <string name="nav_item_images">Series</string>
+    <string name="nav_item_location">Gente</string>
+    <string name="nav_sub_menu">Síguenos</string>
+    <string name="nav_sub_menu_item01">Novedades</string>
+    <string name="nav_sub_menu_item02">Favoritos</string>
+    <string name="drawer_header_text">Popular Movies</string>
+    <string name="second_activity_text"></string>
+    <string name="title_activity_detail"></string>
+
+    <!--Titles cards on detail fragmen-->
+    <string name="synopsis">Synopsis</string>
+    <string name="country">País</string>
+    <string name="runtime">Duración</string>
+    <string name="videos">Videos</string>
+    <string name="homepage">Homepage</string>
+    <string name="imdb">ImDb</string>
+    <string name="links">Enlaces</string>
+    <string name="reviews">Comentarios</string>
+
+    <!--Text for empty fields-->
+    <string name="empty_reviews">No existen comentarios.</string>
+    <string name="empty_trailers">No existen trailers.</string>
+
+    <!--Favorites list-->
+    <string name="empty_favorites">No existen favoritos</string>
+
+    <!--Tabs names-->
+    <string name="tab_popular">MÁS POPULARES</string>
+    <string name="tab_rated">MÁS VOTADAS</string>
+    <string name="tab_favorites">FAVORITOS</string>
+
+    <!--Title genres for translate-->
+    <string name="gen_science_fict">Ciencia Ficción</string>
+    <string name="gen_action">Acción</string>
+    <string name="gen_adventure">Aventuras</string>
+    <string name="gen_animation">Animación</string>
+    <string name="gen_comedy">Comedia</string>
+    <string name="gen_crime">Crimen</string>
+    <string name="gen_documentary">Documental</string>
+    <string name="gen_drama">Drama</string>
+    <string name="gen_family">Familiar</string>
+    <string name="gen_fantasy">Fantasia</string>
+    <string name="gen_foreign">Extranjero</string>
+    <string name="gen_history">Historia</string>
+    <string name="gen_horror">Horror</string>
+    <string name="gen_music">Musical</string>
+    <string name="gen_mistery">Misterio</string>
+    <string name="gen_romance">Amor</string>
+    <string name="gen_tv">TV Película</string>
+    <string name="gen_thriller">Thriller</string>
+    <string name="gen_war">Bélico </string>
+    <string name="gen_western">Western</string>
+
+</resources>

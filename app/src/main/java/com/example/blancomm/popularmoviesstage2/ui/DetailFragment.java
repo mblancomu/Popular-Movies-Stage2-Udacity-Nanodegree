@@ -92,7 +92,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
 
          tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
 
@@ -309,10 +308,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
     private void injectData(MovieDetailInfo movieDetailInfo) throws JSONException {
 
         Picasso.with(getActivity()).load(Constant.URL_DETAIL_IMAGE + movieDetailInfo.getImageDetail())
-                .placeholder(R.drawable.ic_image).into(mImageDetail);
+                .placeholder(R.drawable.logo_app).into(mImageDetail);
 
         Picasso.with(getActivity()).load(Constant.URL_THUMNAIL_IMAGE + "w185/" + movieDetailInfo.getThumnail())
-                .placeholder(R.drawable.ic_image).into(mThumbnail);
+                .placeholder(R.mipmap.ic_launcher).into(mThumbnail);
 
         mTitle = movieDetailInfo.getTitle();
         collapsingToolbar.setTitle(mTitle);
@@ -372,7 +371,7 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
             ImageView imageView = (ImageView) view.findViewById(R.id.iv_genre);
             TextView textView = (TextView) view.findViewById(R.id.tv_genre);
-            textView.setText(genres.get(i).toString().replace(" ", " \n"));
+            textView.setText(UtilsView.setTitleGenre(genres.get(i).toString().replace(" ", " \n"), getActivity()));
             imageView.setImageResource(UtilsView.setIconGenre(genres.get(i).toString()));
             lp.setMargins(15, 15, 15, 15);
             view.setLayoutParams(lp);
@@ -381,6 +380,12 @@ public class DetailFragment extends Fragment implements VolleyListeners {
         }
 
     }
+
+    /**
+     * Put all reviews if exists.
+     * @param reviews
+     * @param viewReview
+     */
 
     private void putReviews(List<ReviewsInfo> reviews, LinearLayout viewReview) {
 
@@ -400,33 +405,38 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
+    /**
+     * Put all trailers if exist.
+     * @param videos
+     * @param viewReview
+     */
     private void putVideos(final List<VideosInfo> videos, LinearLayout viewReview) {
 
         int videosSize = videos.size();
         viewReview.removeAllViews();
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        for (int i = 0; i < videosSize; i++) {
+            for (int i = 0; i < videosSize; i++) {
 
-            View view = inflater.inflate(R.layout.item_videos, mIconsGenres, false);
-            final String key = videos.get(i).getKey();
-            String hd = videos.get(i).getSize();
+                View view = inflater.inflate(R.layout.item_videos, mIconsGenres, false);
+                final String key = videos.get(i).getKey();
+                String hd = videos.get(i).getSize();
 
-            ((TextView) view.findViewById(R.id.tv_trailer)).setText(videos.get(i).getName());
-            ((ImageView) view.findViewById(R.id.iv_video)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    try {
-                        launchLink(URLUtils.getURLTrailerYouTube(key));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
+                ((TextView) view.findViewById(R.id.tv_trailer)).setText(videos.get(i).getName());
+                ((ImageView) view.findViewById(R.id.iv_video)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            launchLink(URLUtils.getURLTrailerYouTube(key));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
-            ((ImageView) view.findViewById(R.id.iv_hd)).setVisibility(hd.equals("720") ? View.VISIBLE : View.GONE);
-            viewReview.addView(view);
+                });
+                ((ImageView) view.findViewById(R.id.iv_hd)).setVisibility(hd.equals("720") ? View.VISIBLE : View.GONE);
+                viewReview.addView(view);
 
-        }
+            }
 
     }
 
@@ -451,11 +461,14 @@ public class DetailFragment extends Fragment implements VolleyListeners {
      */
     private void setRuntimeCard(LayoutInflater inflater) {
 
-        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+        if (!movieDetail.getRuntime().equals("") && movieDetail.getRuntime() != null) {
 
-        ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.runtime));
-        ((TextView) view.findViewById(R.id.tv_description)).setText(movieDetail.getRuntime() + "  min");
-        mMainView.addView(view);
+            View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+
+            ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.runtime));
+            ((TextView) view.findViewById(R.id.tv_description)).setText(movieDetail.getRuntime() + "  min");
+            mMainView.addView(view);
+        }
     }
 
     /**
@@ -466,48 +479,59 @@ public class DetailFragment extends Fragment implements VolleyListeners {
      */
     private void setCountryCard(LayoutInflater inflater) throws JSONException {
 
-        View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
-        int countriesSize = JSONActions.getCountries(movieDetail.getProduction_countries()).size();
-        StringBuilder countries = new StringBuilder(countriesSize);
+        if (!movieDetail.getProduction_countries().equals("[]") && movieDetail.getProduction_countries()!= null) {
 
-        for (int i = 0; i < countriesSize; i++) {
+            View view = inflater.inflate(R.layout.card_detail_text_info, mMainView, false);
+            int countriesSize = JSONActions.getCountries(movieDetail.getProduction_countries()).size();
+            StringBuilder countries = new StringBuilder(countriesSize);
 
-            countries.append(i == countriesSize - 1 ? "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() :
-                    "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() + " \n");
+            for (int i = 0; i < countriesSize; i++) {
 
+                countries.append(i == countriesSize - 1 ? "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() :
+                        "-  " + JSONActions.getCountries(movieDetail.getProduction_countries()).get(i).toString() + " \n");
+
+            }
+
+            ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.country));
+            ((TextView) view.findViewById(R.id.tv_description)).setText(countries.toString());
+            mMainView.addView(view);
         }
-
-        ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.country));
-        ((TextView) view.findViewById(R.id.tv_description)).setText(countries.toString());
-        mMainView.addView(view);
 
     }
 
     /**
-     * TODO: Sure, i put here the trailers, now non implementing. Card view for the videos of this movie. This contain the trailers.
+     * If a film have trailers...here put the info.
      *
      * @param inflater
      */
     private void setVideosCard(LayoutInflater inflater) {
 
-        View view = inflater.inflate(R.layout.card_detail_trailers, mMainView, false);
+        if (videos.size() > 0) {
 
-        ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.videos));
-        putVideos(videos, (LinearLayout) view.findViewById(R.id.ll_trailers));
-        mMainView.addView(view);
+            View view = inflater.inflate(R.layout.card_detail_trailers, mMainView, false);
+
+            ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.videos));
+            putVideos(videos, (LinearLayout) view.findViewById(R.id.ll_trailers));
+            mMainView.addView(view);
+        }
 
     }
 
+    /**
+     * Set the principal card with all the reviews in a film.
+     * @param inflater
+     */
     private void setReviewsCard(LayoutInflater inflater) {
 
-        View view = inflater.inflate(R.layout.card_detail_reviews, mMainView, false);
+        if (reviews.size() > 0){
+            View view = inflater.inflate(R.layout.card_detail_reviews, mMainView, false);
 
-        ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.reviews));
-        int sizeReview = reviews.size();
-        view.findViewById(R.id.tv_empty).setVisibility(sizeReview > 0 ? View.GONE : View.VISIBLE);
-        putReviews(reviews, ((LinearLayout) view.findViewById(R.id.ll_reviews)));
-        mMainView.addView(view);
-
+            ((TextView) view.findViewById(R.id.tv_title)).setText(getString(R.string.reviews));
+            int sizeReview = reviews.size();
+            view.findViewById(R.id.tv_empty).setVisibility(sizeReview > 0 ? View.GONE : View.VISIBLE);
+            putReviews(reviews, ((LinearLayout) view.findViewById(R.id.ll_reviews)));
+            mMainView.addView(view);
+        }
     }
 
     /**
@@ -553,6 +577,10 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
+    /**
+     * Request for the videos, movies and reviews. Is all for the detail of a film.
+     * @param id
+     */
     private void beginRequest(String id) {
 
         try {
@@ -571,6 +599,9 @@ public class DetailFragment extends Fragment implements VolleyListeners {
 
     }
 
+    /**
+     * Share the link of a film.
+     */
     public void shareTextUrl() {
         Intent share = new Intent(android.content.Intent.ACTION_SEND);
         share.setType("text/plain");

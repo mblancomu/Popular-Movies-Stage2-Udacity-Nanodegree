@@ -1,31 +1,35 @@
 package com.example.blancomm.popularmoviesstage2.adapters;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
+import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.ui.FavoritesFragment;
 import com.example.blancomm.popularmoviesstage2.ui.GridFragment;
-import com.example.blancomm.popularmoviesstage2.ui.MainFragment;
+import com.example.blancomm.popularmoviesstage2.ui.GridTabletFragment;
 
 
 public class MainPagerAdapter extends FragmentStatePagerAdapter {
 
+    private Context context;
 
-
-    public MainPagerAdapter(FragmentManager fm) {
+    public MainPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
+        this.context = context;
     }
 
     @Override
     public Fragment getItem(int position) {
         Fragment fragment = null;
+        boolean tabletSize = context.getResources().getBoolean(R.bool.isTablet);
         switch (position){
             case 0:
                 fragment =  GridFragment.newInstance(position);
                 break;
             case 1:
-                fragment =  GridFragment.newInstance(position);
+                fragment =  tabletSize ? GridTabletFragment.newInstance(position): GridFragment.newInstance(position);
                 break;
             case 2:
                 fragment =  FavoritesFragment.newInstance(position);
@@ -51,16 +55,16 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position){
             case 0:
-                title = "MOST POPULAR";
+                title = context.getString(R.string.tab_popular);
                 break;
             case 1:
-                title = "HIGHEST RATED";
+                title = context.getString(R.string.tab_rated);
                 break;
             case 2:
-                title = "FAVORITES";
+                title = context.getString(R.string.tab_favorites);
                 break;
             default:
-                title = "MOST POPULAR";
+                title = context.getString(R.string.tab_popular);
         }
 
         return title;

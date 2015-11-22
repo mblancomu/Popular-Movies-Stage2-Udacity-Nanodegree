@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Created by manuel on 8/11/15.
  */
-public class GridFragment extends Fragment implements VolleyListeners, PositionListener{
+public class GridTabletFragment extends Fragment implements VolleyListeners, PositionListener{
 
     private static final String TAB_POSITION = "tab_position";
     private static final String TAG = MainFragment.class.getSimpleName();
@@ -47,8 +47,8 @@ public class GridFragment extends Fragment implements VolleyListeners, PositionL
     private boolean tabletSize;
     private boolean rotation;
 
-    public static GridFragment newInstance(int tabPosition) {
-        GridFragment fragment = new GridFragment();
+    public static GridTabletFragment newInstance(int tabPosition) {
+        GridTabletFragment fragment = new GridTabletFragment();
         Bundle args = new Bundle();
         args.putInt(TAB_POSITION, tabPosition);
         fragment.setArguments(args);
@@ -185,18 +185,6 @@ public class GridFragment extends Fragment implements VolleyListeners, PositionL
             mAdapter.updateResults(mMoviesPopular, getActivity());
             recyclerView.setVisibility(View.VISIBLE);
 
-            if (tabletSize && !rotation && mPosition == 0) {
-
-                mAdapter.updateSelectItem(0);
-
-                    DetailFragment detailFragment = DetailFragment.newInstance(mMoviesPopular.get(0).getId(), 0);
-                    ((MainActivity) getActivity()).getSupportFragmentManager().beginTransaction()
-                            .add(R.id.fragment_placeholder, detailFragment)
-                            .commit();
-
-                rotation = true;
-            }
-
         } else {
 
             mEmpty.setVisibility(mMoviesPopular.size() > 0 ? View.GONE : View.VISIBLE);
@@ -259,8 +247,8 @@ public class GridFragment extends Fragment implements VolleyListeners, PositionL
     public void setMenuVisibility(final boolean visible) {
         super.setMenuVisibility(visible);
         if (visible && mMoviesPopular != null) {
-            if (tabletSize && mPosition == 0 && mMoviesPopular.size() > 0) {
-                DetailFragment detailFragment = DetailFragment.newInstance(mMoviesPopular.get(0).getId(), 0);
+            if (tabletSize && mPosition == 1 && mMoviesPopular.size() > 0) {
+                DetailFragment detailFragment = DetailFragment.newInstance(mMoviesPopular.get(0).getId(), mPosition);
                 ((MainActivity) getActivity()).getSupportFragmentManager().beginTransaction()
                         .add(R.id.fragment_placeholder, detailFragment)
                         .commit();

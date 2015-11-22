@@ -39,7 +39,7 @@ public class Constant {
     public static final String QUERY_PARAM_V = "v";
 
     //Param API KEY. Is a personal value.
-    public static final String PARAM_API_KEY = "++++++++++++";
+    public static final String PARAM_API_KEY = "********************";
 
     //Queries values for any param in url and field on JSONObject Detail
     public static final String PARAM_ADULT = "adult";

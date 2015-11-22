@@ -23,7 +23,7 @@
             android:layout_width="@dimen/thumb_detail_width"
             android:layout_height="@dimen/thumb_detail_height"
             android:layout_gravity="bottom"
-            android:src="@drawable/ic_image"
+            android:src="@drawable/logo_app"
             android:scaleType="fitCenter"
             android:transitionName="@string/transition_grid_to_detail" />
 

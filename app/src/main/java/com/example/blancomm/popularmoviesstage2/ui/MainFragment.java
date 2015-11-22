@@ -1,31 +1,25 @@
 package com.example.blancomm.popularmoviesstage2.ui;
 
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.blancomm.popularmoviesstage2.R;
 import com.example.blancomm.popularmoviesstage2.adapters.MainPagerAdapter;
 import com.example.blancomm.popularmoviesstage2.utils.Constant;
 
+import static com.example.blancomm.popularmoviesstage2.R.id.fragment_placeholder;
+
 public class MainFragment extends Fragment {
 
     private static final String TAG = MainFragment.class.getSimpleName();
     private int configDevice;
+    private boolean tabletSize;
+    private DetailFragment detail;
 
     public MainFragment() {
     }
@@ -38,9 +32,8 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
 
-        boolean tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
+        tabletSize = getActivity().getResources().getBoolean(R.bool.isTablet);
 
         if (!tabletSize) {
             setRetainInstance(false);
@@ -77,11 +70,28 @@ public class MainFragment extends Fragment {
 
         }
 
-        MainPagerAdapter adapter = new MainPagerAdapter(getActivity().getSupportFragmentManager());
-        ViewPager viewPager = (ViewPager) v.findViewById(R.id.viewpager);
+        final MainPagerAdapter adapter = new MainPagerAdapter(getActivity().getSupportFragmentManager(), getActivity());
+        final ViewPager viewPager = (ViewPager) v.findViewById(R.id.viewpager);
         viewPager.setAdapter(adapter);
         TabLayout tabLayout = (TabLayout) v.findViewById(R.id.tablayout);
         tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         return v;
     }
