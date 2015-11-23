@@ -134,14 +134,14 @@ public class FavoritesFragment  extends Fragment implements PositionListener{
 
         mMovies = SqlHandler.getAllFavorites();
 
-        if (mMovies != null) {
+        if (mMovies != null && mMovies.size() > 0) {
 
             mAdapter.updateResults(mMovies, getActivity());
             recyclerView.setVisibility(View.VISIBLE);
 
         } else {
 
-            mEmpty.setVisibility(mMovies != null ? View.GONE : View.VISIBLE);
+            mEmpty.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.GONE);
         }
 

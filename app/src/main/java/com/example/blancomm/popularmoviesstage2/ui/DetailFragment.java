@@ -348,7 +348,6 @@ public class DetailFragment extends Fragment implements VolleyListeners {
             }
         });
 
-
     }
 
     /**

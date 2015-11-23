@@ -135,11 +135,11 @@ public class SqlHandler {
 
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             Cursor cursor = db.rawQuery(selectQuery, null);
+            favorites = new ArrayList<>();
 
             if (cursor.moveToFirst()) {
                 do {
 
-                    favorites = new ArrayList<>();
                     MoviesInfo favoritesMovies = new MoviesInfo();
                     favoritesMovies.setId(cursor.getString(1));
                     favoritesMovies.setTitle(cursor.getString(2));
